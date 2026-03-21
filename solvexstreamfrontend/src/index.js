@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App, { Footer, Hello, Hi } from './App';
 import reportWebVitals from './reportWebVitals';
-import { NewfileMethod } from './newfile';
+import { LoginUserusing } from './login/login';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -11,7 +11,7 @@ root.render(
     <Hi />
     <Footer/>
     <Hello />
-     <NewfileMethod />
+    <LoginUserusing />
   </React.StrictMode>
 );
 
