@@ -1,11 +1,13 @@
 // Login.js
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Login() {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     const response = await fetch("http://localhost:8080/api/auth/login", {
@@ -15,6 +17,9 @@ function Login() {
     });
     const data = await response.text();
     setMessage(data);
+    if(data==="Login successful!"){
+        navigate("/profile")
+    }
   };
 
   return (
