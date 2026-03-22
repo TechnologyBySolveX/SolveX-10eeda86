@@ -1,5 +1,6 @@
 // Signup.js
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 function Signup() {
   const [userName, setUserName] = useState("");
@@ -23,6 +24,7 @@ function Signup() {
       <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
       <button onClick={handleSignup}>Signup</button>
       <p>{message}</p>
+      <p>Already have an account? <Link to="/login">Login here</Link></p>
     </div>
   );
 }
