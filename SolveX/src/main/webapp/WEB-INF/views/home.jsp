@@ -28,17 +28,9 @@
 			<h4>SolveX</h4>
 			<a href="home">🏠 Home</a> 
 			<a href="problems">📚 Practice Java Problems</a> 
-			<a href="/daily">🔥 Daily Challenge</a> 
+			<a href="signupChat">🔥 Chat Applications</a> 
 			<a href="/practiceSQLQuery">🏆Practice SQL Query</a> 
-			<a href="praticePythonProblems">🏆Practice Python Problems</a>
-			<a href="praticePythonProblems">🏆Practice Python Problems</a>
-			<a href="praticePythonProblems">🏆Practice Python Problems</a>
-			<a href="praticePythonProblems">🏆Practice Python Problems</a>
-			<a href="praticePythonProblems">🏆Practice Python Problems</a>
-			<a href="praticePythonProblems">🏆Practice Python Problems</a>
-			<a href="praticePythonProblems">🏆Practice Python Problems</a>
-			<a href="praticePythonProblems">🏆Practice Python Problems</a>
-			<a href="praticePythonProblems">🏆Practice Python Problems</a>
+
 			
 		</div>
 

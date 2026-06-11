@@ -7,6 +7,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-<h2>This is the Example of the daily JSP Pages </h2>
+<h2>Welcome to CHat Box </h2>
 </body>
 </html>
