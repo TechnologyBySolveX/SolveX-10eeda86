@@ -14,7 +14,10 @@
     Phone: <input type="text" name="phone"/><br/>
     <button type="submit">Register</button>
 </form>
-			Already have an account? <a href="loginChat">Login</a>
+				<!-- LINKS -->
+		<div class="links">
+			Already have an account? <a href="/loginChat">Login</a>
+		</div>
 
 <p style="color:red">${error}</p>
 

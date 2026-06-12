@@ -7,8 +7,11 @@
 <title>Insert title here</title>
 </head>
 <body>
-
-Please Enter the phone Number for Login ;;
+Please Enter your Phone Number  
+<form action="/loginChat" method="get">
+    Phone: <input type="text" name="phone" placeholder="please enter the Your phone Number"/><br/>
+    <button type="submit">Login</button>
+</form>
 
 </body>
 </html>

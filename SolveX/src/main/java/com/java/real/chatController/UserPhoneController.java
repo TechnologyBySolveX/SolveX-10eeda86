@@ -54,4 +54,15 @@ public class UserPhoneController {
 
         return "redirect:/chat";
     }
+    
+    @GetMapping("/loginChat")
+    public String loginPage() {
+        return "loginChat";
+    }
+    
+    @GetMapping("/loginChat")
+    public String getAllloginDataUsingPhonenumber() {
+    	System.out.println("Calling the getAllloginDataUsingPhonenumber");
+		return "loginChat";
+    	}
 }
