@@ -60,9 +60,9 @@ public class UserPhoneController {
         return "loginChat";
     }
     
-    @GetMapping("/loginChat")
-    public String getAllloginDataUsingPhonenumber() {
-    	System.out.println("Calling the getAllloginDataUsingPhonenumber");
-		return "loginChat";
-    	}
+	/*
+	 * @GetMapping("/loginChat") public String getAllloginDataUsingPhonenumber() {
+	 * System.out.println("Calling the getAllloginDataUsingPhonenumber"); return
+	 * "loginChat"; }
+	 */
 }

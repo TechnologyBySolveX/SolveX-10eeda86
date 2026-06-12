@@ -8,7 +8,7 @@
 </head>
 <body>
 Please Enter your Phone Number  
-<form action="/loginChat" method="get">
+<form action="/loginChat" method="post">
     Phone: <input type="text" name="phone" placeholder="please enter the Your phone Number"/><br/>
     <button type="submit">Login</button>
 </form>

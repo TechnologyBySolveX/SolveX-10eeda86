@@ -1,5 +1,7 @@
 package com.java.real.chatController;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +31,7 @@ public class ChatPageController {
                             HttpSession session,
                             Model model) {
     	System.out.println("Receiver phone Number is : "+phone);
-        UserPhone receiver = repo.findByPhoneNumber(phone);
+        Optional<UserPhone> receiver = repo.findByPhoneNumber(phone);
 
         if (receiver == null) {
             model.addAttribute("error", "User not found");
