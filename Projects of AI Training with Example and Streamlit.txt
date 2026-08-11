@@ -1,0 +1,4 @@
+Projects Made Related to below topics and all.....
+
+Module 1: AI Fundamentals	1 Week	AI vs ML, LLM basics, SDLC use cases, risks like bias & hallucination
+

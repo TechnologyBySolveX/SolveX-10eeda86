@@ -1,0 +1,281 @@
+Complete Streamlit Project
+
+
+
+import streamlit as st
+from groq import Groq
+
+# -------------------------------------
+# Streamlit Config
+# -------------------------------------
+
+st.set_page_config(
+    page_title="ML Learning Assistant",
+    page_icon="📊",
+    layout="wide"
+)
+
+# -------------------------------------
+# Groq Client
+# -------------------------------------
+
+client = Groq(
+    api_key=st.secrets["GROQ_API_KEY"]
+)
+
+MODEL = "llama-3.3-70b-versatile"
+
+# -------------------------------------
+# Helper Function
+# -------------------------------------
+
+def ask_groq(prompt):
+
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.3,
+        max_tokens=1500
+    )
+
+    return response.choices[0].message.content
+
+# -------------------------------------
+# UI
+# -------------------------------------
+
+st.title("📊 ML Learning Assistant")
+
+st.markdown(
+"""
+Learn Machine Learning concepts interactively
+using Groq LLM.
+"""
+)
+
+menu = st.sidebar.selectbox(
+    "Choose Topic",
+    [
+        "Supervised Learning",
+        "Unsupervised Learning",
+        "ML Lifecycle",
+        "Evaluation Metrics",
+        "ML Quiz",
+        "ML Tutor"
+    ]
+)
+
+# =====================================
+# SUPERVISED LEARNING
+# =====================================
+
+if menu == "Supervised Learning":
+
+    st.header("📘 Supervised Learning")
+
+    question = st.text_input(
+        "Ask About Supervised Learning",
+        "What is supervised learning?"
+    )
+
+    if st.button("Explain"):
+
+        prompt = f"""
+        Explain:
+
+        {question}
+
+        Include:
+        - Definition
+        - Examples
+        - Algorithms
+        - Advantages
+        - Use Cases
+
+        Explain for beginners.
+        """
+
+        with st.spinner("Thinking..."):
+            st.markdown(ask_groq(prompt))
+
+# =====================================
+# UNSUPERVISED LEARNING
+# =====================================
+
+elif menu == "Unsupervised Learning":
+
+    st.header("📗 Unsupervised Learning")
+
+    question = st.text_input(
+        "Ask About Unsupervised Learning",
+        "What is clustering?"
+    )
+
+    if st.button("Generate Explanation"):
+
+        prompt = f"""
+        Explain:
+
+        {question}
+
+        Include:
+        - Definition
+        - Clustering
+        - Association
+        - Algorithms
+        - Real world examples
+        """
+
+        with st.spinner("Thinking..."):
+            st.markdown(ask_groq(prompt))
+
+# =====================================
+# ML LIFECYCLE
+# =====================================
+
+elif menu == "ML Lifecycle":
+
+    st.header("🔄 Machine Learning Lifecycle")
+
+    if st.button("Show Lifecycle"):
+
+        prompt = """
+        Explain the Machine Learning Lifecycle.
+
+        Include:
+
+        1. Data Collection
+        2. Data Cleaning
+        3. Feature Engineering
+        4. Model Training
+        5. Model Evaluation
+        6. Deployment
+        7. Monitoring
+
+        Give practical examples.
+        """
+
+        with st.spinner("Generating lifecycle guide..."):
+            st.markdown(ask_groq(prompt))
+
+# =====================================
+# EVALUATION METRICS
+# =====================================
+
+elif menu == "Evaluation Metrics":
+
+    st.header("📊 ML Evaluation Metrics")
+
+    metric = st.selectbox(
+        "Select Metric",
+        [
+            "Accuracy",
+            "Precision",
+            "Recall",
+            "F1 Score",
+            "ROC AUC"
+        ]
+    )
+
+    if st.button("Learn Metric"):
+
+        prompt = f"""
+        Explain {metric}.
+
+        Include:
+
+        - Definition
+        - Formula
+        - Example
+        - Advantages
+        - Limitations
+        - Interview Questions
+        """
+
+        with st.spinner("Analyzing..."):
+            st.markdown(ask_groq(prompt))
+
+# =====================================
+# QUIZ
+# =====================================
+
+elif menu == "ML Quiz":
+
+    st.header("📝 ML Quiz Generator")
+
+    level = st.selectbox(
+        "Difficulty",
+        [
+            "Beginner",
+            "Intermediate",
+            "Advanced"
+        ]
+    )
+
+    if st.button("Generate Quiz"):
+
+        prompt = f"""
+        Generate ONE machine learning quiz.
+
+        Difficulty:
+        {level}
+
+        Include:
+
+        - Question
+        - Four Options
+        - Correct Answer
+        - Explanation
+        """
+
+        with st.spinner("Creating quiz..."):
+            st.markdown(ask_groq(prompt))
+
+# =====================================
+# ML TUTOR
+# =====================================
+
+elif menu == "ML Tutor":
+
+    st.header("🤖 Ask ML Tutor")
+
+    user_question = st.text_area(
+        "Enter Question"
+    )
+
+    if st.button("Ask"):
+
+        prompt = f"""
+        You are a Machine Learning Mentor.
+
+        Answer:
+
+        {user_question}
+
+        Explain:
+
+        - Definition
+        - Example
+        - Real World Use Case
+        - Common Mistakes
+
+        Keep it beginner friendly.
+        """
+
+        with st.spinner("Thinking..."):
+            st.markdown(ask_groq(prompt))
+
+# -------------------------------------
+# Footer
+# -------------------------------------
+
+st.divider()
+
+st.caption(
+    "Powered by Streamlit + Groq Llama 3"
+)

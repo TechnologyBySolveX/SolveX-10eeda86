@@ -1,0 +1,353 @@
+Complete Streamlit Codeimport streamlit as st
+
+
+import streamlit as st
+import pandas as pd
+from groq import Groq
+
+# ---------------------------------------------------
+# PAGE CONFIG
+# ---------------------------------------------------
+
+st.set_page_config(
+    page_title="AI Fundamentals Learning Hub",
+    page_icon="🤖",
+    layout="wide"
+)
+
+# ---------------------------------------------------
+# GROQ CLIENT
+# ---------------------------------------------------
+
+client = Groq(
+    api_key=st.secrets["GROQ_API_KEY"]
+)
+
+MODEL = "llama-3.3-70b-versatile"
+
+
+def ask_groq(prompt):
+
+    try:
+
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0.3,
+            max_tokens=1500
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+
+# ---------------------------------------------------
+# TITLE
+# ---------------------------------------------------
+
+st.title("🤖 AI Fundamentals Learning Hub")
+
+st.markdown("""
+Learn AI Fundamentals using an LLM-powered educational assistant.
+""")
+
+# ---------------------------------------------------
+# SIDEBAR
+# ---------------------------------------------------
+
+menu = st.sidebar.selectbox(
+    "Select Topic",
+    [
+        "AI vs ML",
+        "LLM Basics",
+        "SDLC Use Cases",
+        "Bias Detector",
+        "Hallucination Demo",
+        "AI Quiz",
+        "AI Tutor"
+    ]
+)
+
+# ===================================================
+# AI VS ML
+# ===================================================
+
+if menu == "AI vs ML":
+
+    st.header("🤖 AI vs ML")
+
+    if st.button("Generate Comparison"):
+
+        with st.spinner("Generating comparison..."):
+
+            prompt = """
+            Explain AI and Machine Learning.
+
+            Provide:
+            1. Definition
+            2. Goals
+            3. Examples
+            4. Key Differences
+
+            Use markdown table format.
+            """
+
+            result = ask_groq(prompt)
+
+            st.markdown(result)
+
+# ===================================================
+# LLM BASICS
+# ===================================================
+
+elif menu == "LLM Basics":
+
+    st.header("📚 Learn About LLMs")
+
+    topic = st.text_input(
+        "Enter Topic",
+        value="What are Large Language Models?"
+    )
+
+    if st.button("Explain Topic"):
+
+        with st.spinner("Fetching explanation..."):
+
+            prompt = f"""
+            Explain the following topic for beginners:
+
+            {topic}
+
+            Include:
+            - Definition
+            - Examples
+            - Applications
+            - Advantages
+            - Limitations
+
+            Keep it easy to understand.
+            """
+
+            result = ask_groq(prompt)
+
+            st.markdown(result)
+
+# ===================================================
+# SDLC USE CASES
+# ===================================================
+
+elif menu == "SDLC Use Cases":
+
+    st.header("🚀 AI in SDLC")
+
+    phase = st.selectbox(
+        "Choose SDLC Phase",
+        [
+            "Requirements",
+            "Design",
+            "Development",
+            "Testing",
+            "Deployment",
+            "Monitoring"
+        ]
+    )
+
+    if st.button("Show Use Cases"):
+
+        with st.spinner("Analyzing use cases..."):
+
+            prompt = f"""
+            Explain how AI helps in the {phase} phase of SDLC.
+
+            Provide:
+
+            - Purpose
+            - Tools
+            - Real-world Examples
+            - Benefits
+            - Challenges
+
+            Format clearly.
+            """
+
+            result = ask_groq(prompt)
+
+            st.markdown(result)
+
+# ===================================================
+# BIAS DETECTOR
+# ===================================================
+
+elif menu == "Bias Detector":
+
+    st.header("⚖️ Bias Detection")
+
+    text = st.text_area(
+        "Enter a statement"
+    )
+
+    if st.button("Analyze Bias"):
+
+        if text:
+
+            with st.spinner("Checking bias..."):
+
+                prompt = f"""
+                Analyze the following text.
+
+                Detect:
+                - Gender Bias
+                - Age Bias
+                - Cultural Bias
+                - Racial Bias
+                - Social Bias
+
+                Text:
+                {text}
+
+                Return:
+                1. Is bias present?
+                2. Bias category
+                3. Explanation
+                4. Better alternative wording
+                """
+
+                result = ask_groq(prompt)
+
+                st.markdown(result)
+
+# ===================================================
+# HALLUCINATION DEMO
+# ===================================================
+
+elif menu == "Hallucination Demo":
+
+    st.header("🧠 Hallucination Awareness")
+
+    question = st.text_input(
+        "Ask a Question"
+    )
+
+    if st.button("Analyze Hallucination Risk"):
+
+        with st.spinner("Checking hallucination risk..."):
+
+            prompt = f"""
+            User Question:
+
+            {question}
+
+            Explain:
+
+            1. Can an LLM hallucinate while answering?
+            2. Risk Level (Low/Medium/High)
+            3. Why?
+            4. How should the answer be verified?
+            5. Trustworthy sources to verify.
+
+            Educational explanation only.
+            """
+
+            result = ask_groq(prompt)
+
+            st.markdown(result)
+
+# ===================================================
+# QUIZ
+# ===================================================
+
+elif menu == "AI Quiz":
+
+    st.header("📝 AI Fundamentals Quiz")
+
+    difficulty = st.selectbox(
+        "Difficulty",
+        [
+            "Beginner",
+            "Intermediate",
+            "Advanced"
+        ]
+    )
+
+    if st.button("Generate Quiz"):
+
+        with st.spinner("Generating quiz..."):
+
+            prompt = f"""
+            Create one multiple-choice question about:
+
+            AI Fundamentals
+            Machine Learning
+            LLMs
+            Bias
+            Hallucinations
+            SDLC
+
+            Difficulty: {difficulty}
+
+            Provide:
+
+            Question
+            Option A
+            Option B
+            Option C
+            Option D
+            Correct Answer
+            Explanation
+            """
+
+            result = ask_groq(prompt)
+
+            st.markdown(result)
+
+# ===================================================
+# AI TUTOR
+# ===================================================
+
+elif menu == "AI Tutor":
+
+    st.header("🎓 AI Fundamentals Tutor")
+
+    question = st.text_area(
+        "Ask any AI question"
+    )
+
+    if st.button("Ask Tutor"):
+
+        with st.spinner("Thinking..."):
+
+            prompt = f"""
+            You are an AI Fundamentals Trainer.
+
+            Answer this question:
+
+            {question}
+
+            Explain for beginners.
+
+            Include:
+            - Simple explanation
+            - Example
+            - Real-world use case
+            """
+
+            result = ask_groq(prompt)
+
+            st.markdown(result)
+
+# ---------------------------------------------------
+# FOOTER
+# ---------------------------------------------------
+
+st.divider()
+
+st.caption(
+    "Powered by Streamlit + Groq Llama 3 | AI Fundamentals Learning Hub"
+)

@@ -1,0 +1,289 @@
+pipeline {
+
+    agent any
+
+    environment {
+
+        FRONTEND_IP = "10.0.0.11"
+
+        DOCKER_REPO = "sunilgupta"
+        IMAGE_NAME = "${DOCKER_REPO}/frontend"
+        IMAGE_TAG = "${BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+
+            steps {
+
+                echo "===== Cloning Frontend Code ====="
+
+                checkout scm
+            }
+        }
+
+        stage('Docker Login') {
+
+            steps {
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Build Frontend Image') {
+
+            steps {
+
+                echo "===== Building Frontend Docker Image ====="
+
+                sh """
+                docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+
+                docker images | grep frontend
+                """
+            }
+        }
+
+        stage('Push Frontend Image') {
+
+            steps {
+
+                echo "===== Pushing Frontend Image ====="
+
+                sh """
+                docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                docker push ${IMAGE_NAME}:latest
+                """
+            }
+        }
+
+        stage('Deploy Frontend') {
+
+            steps {
+
+                echo "===== Deploying Frontend Server ====="
+
+                sshagent(['deploy-key']) {
+
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ubuntu@${FRONTEND_IP} '
+
+                    echo "Pulling Latest Image..."
+                    docker pull ${IMAGE_NAME}:latest
+
+                    echo "Stopping Existing Container..."
+                    docker stop frontend || true
+
+                    echo "Removing Existing Container..."
+                    docker rm frontend || true
+
+                    echo "Starting Frontend..."
+
+                    docker run -d \
+                    --name frontend \
+                    -p 80:80 \
+                    --restart unless-stopped \
+                    ${IMAGE_NAME}:latest
+
+                    docker ps
+
+                    '
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+
+        success {
+            echo '✅ Frontend Deployment Successful'
+        }
+
+        failure {
+            echo '❌ Frontend Deployment Failed'
+        }
+
+        always {
+            echo 'Pipeline Finished'
+        }
+    }
+}
+
+
+
+===================================== If u want Email Notifications and all after Build And Deployment success ============================
+
+pipeline {
+
+    agent any
+
+    environment {
+
+        FRONTEND_IP = "10.10.10.10"
+
+        DOCKER_REPO = "sunilgupta"
+
+        IMAGE_NAME = "${DOCKER_REPO}/frontend"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
+
+        EMAIL_TO = "sunil.gupta@company.com"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+
+            steps {
+
+                echo "================================="
+                echo "CHECKOUT FRONTEND CODE"
+                echo "================================="
+
+                checkout scm
+            }
+        }
+
+        stage('Docker Login') {
+
+            steps {
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+
+            steps {
+
+                echo "Building Frontend Image"
+
+                sh """
+                docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+
+                docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+
+                docker images | grep frontend
+                """
+            }
+        }
+
+        stage('Push Docker Image') {
+
+            steps {
+
+                echo "Pushing Image"
+
+                sh """
+                docker push ${IMAGE_NAME}:${IMAGE_TAG}
+
+                docker push ${IMAGE_NAME}:latest
+                """
+            }
+        }
+
+        stage('Deploy Frontend') {
+
+            steps {
+
+                sshagent(['deploy-key']) {
+
+                    sh """
+                    ssh -o StrictHostKeyChecking=no ubuntu@${FRONTEND_IP} '
+
+                    docker pull ${IMAGE_NAME}:latest
+
+                    docker stop frontend || true
+                    docker rm frontend || true
+
+                    docker run -d \
+                    --name frontend \
+                    --restart unless-stopped \
+                    -p 80:80 \
+                    ${IMAGE_NAME}:latest
+
+                    docker ps
+
+                    docker logs frontend --tail 50
+
+                    '
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+
+        success {
+
+            emailext(
+                subject: "SUCCESS | Frontend Deployment | ${JOB_NAME} #${BUILD_NUMBER}",
+                body: """
+                Frontend deployment completed successfully.
+
+                Job Name     : ${JOB_NAME}
+                Build Number : ${BUILD_NUMBER}
+
+                Build URL:
+                ${BUILD_URL}
+
+                Full Logs Attached.
+                """,
+                attachLog: true,
+                compressLog: true,
+                to: "${EMAIL_TO}"
+            )
+        }
+
+        failure {
+
+            emailext(
+                subject: "FAILED | Frontend Deployment | ${JOB_NAME} #${BUILD_NUMBER}",
+                body: """
+                Frontend deployment failed.
+
+                Job Name     : ${JOB_NAME}
+                Build Number : ${BUILD_NUMBER}
+
+                Build URL:
+                ${BUILD_URL}
+
+                Full Logs Attached.
+                """,
+                attachLog: true,
+                compressLog: true,
+                to: "${EMAIL_TO}"
+            )
+        }
+
+        always {
+
+            echo 'Pipeline Finished'
+        }
+    }
+}

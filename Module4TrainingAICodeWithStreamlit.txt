@@ -1,0 +1,247 @@
+Complete Code with Streamlit 
+
+
+import streamlit as st
+from groq import Groq
+
+# ============================
+# CONFIG
+# ============================
+
+st.set_page_config(
+    page_title="Agentic AI Developer Assistant",
+    page_icon="🤖",
+    layout="wide"
+)
+
+# ============================
+# GROQ
+# ============================
+
+client = Groq(
+    api_key=st.secrets["GROQ_API_KEY"]
+)
+
+MODEL = "llama-3.3-70b-versatile"
+
+
+def ask_groq(prompt):
+
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.3,
+        max_tokens=2000
+    )
+
+    return response.choices[0].message.content
+
+# ============================
+# TITLE
+# ============================
+
+st.title("🤖 Agentic AI Developer Assistant")
+
+menu = st.sidebar.selectbox(
+    "Choose Function",
+    [
+        "Goal Planner",
+        "Code Generation Agent",
+        "Debugging Agent",
+        "Automation Agent",
+        "AI Agent Chat"
+    ]
+)
+
+# ============================
+# GOAL PLANNER
+# ============================
+
+if menu == "Goal Planner":
+
+    st.header("🎯 Goal-Based Agent")
+
+    goal = st.text_area(
+        "Enter Goal",
+        "Build a Flask Todo Application"
+    )
+
+    if st.button("Generate Plan"):
+
+        prompt = f"""
+        You are an autonomous AI Agent.
+
+        User Goal:
+        {goal}
+
+        Create a step-by-step execution plan.
+
+        Include:
+
+        1. Goal Analysis
+        2. Planning
+        3. Sub Tasks
+        4. Expected Output
+        """
+
+        result = ask_groq(prompt)
+
+        st.markdown(result)
+
+# ============================
+# CODE GENERATOR
+# ============================
+
+elif menu == "Code Generation Agent":
+
+    st.header("💻 Code Generation Agent")
+
+    task = st.text_area(
+        "Describe Application"
+    )
+
+    language = st.selectbox(
+        "Language",
+        [
+            "Python",
+            "Java",
+            "Spring Boot",
+            "JavaScript"
+        ]
+    )
+
+    if st.button("Generate Code"):
+
+        prompt = f"""
+        You are an AI Coding Agent.
+
+        Generate {language} code.
+
+        Requirement:
+        {task}
+
+        Include:
+        - Comments
+        - Error Handling
+        - Best Practices
+        """
+
+        result = ask_groq(prompt)
+
+        st.code(result)
+
+# ============================
+# DEBUGGING AGENT
+# ============================
+
+elif menu == "Debugging Agent":
+
+    st.header("🐞 Debugging Agent")
+
+    code = st.text_area(
+        "Paste Code"
+    )
+
+    if st.button("Debug Code"):
+
+        prompt = f"""
+        You are a Senior Software Engineer.
+
+        Analyze this code.
+
+        Provide:
+
+        1. Bugs
+        2. Root Cause
+        3. Fix
+        4. Improved Code
+
+        Code:
+
+        {code}
+        """
+
+        result = ask_groq(prompt)
+
+        st.markdown(result)
+
+# ============================
+# AUTOMATION AGENT
+# ============================
+
+elif menu == "Automation Agent":
+
+    st.header("⚙️ Automation Agent")
+
+    task = st.text_area(
+        "Automation Goal",
+        "Automate Daily Log File Cleanup"
+    )
+
+    if st.button("Create Automation Plan"):
+
+        prompt = f"""
+        User Task:
+        {task}
+
+        Act as an Automation Agent.
+
+        Create:
+
+        1. Objective
+        2. Workflow
+        3. Automation Steps
+        4. Risks
+        5. Python Script Example
+        """
+
+        result = ask_groq(prompt)
+
+        st.markdown(result)
+
+# ============================
+# AGENT CHAT
+# ============================
+
+elif menu == "AI Agent Chat":
+
+    st.header("🤖 Agent Chat")
+
+    question = st.text_area(
+        "Ask Agent"
+    )
+
+    if st.button("Submit"):
+
+        prompt = f"""
+        You are an Agentic AI Tutor.
+
+        Answer:
+
+        {question}
+
+        Explain:
+
+        - Agent Decision Making
+        - Planning
+        - Execution
+        - Examples
+
+        Keep it beginner friendly.
+        """
+
+        result = ask_groq(prompt)
+
+        st.markdown(result)
+
+st.divider()
+
+st.caption(
+    "Agentic AI Learning Project | Streamlit + Groq"
+)
+

@@ -1,0 +1,439 @@
+Copilot said:
+
+Since your Backend needs to connect to a separate MySQL server, here's a complete Jenkins Pipeline similar to your Frontend pipeline, including:
+
+Checkout source code
+Build Spring Boot JAR
+Docker Login
+Build Docker Image
+Push Image to Docker Hub
+Deploy on Backend Server
+Pass MySQL details as environment variables
+Print logs in Jenkins console
+
+pipeline {
+
+    agent any
+
+    environment {
+
+        BACKEND_IP = "10.10.10.20"
+        MYSQL_IP   = "10.10.10.30"
+
+        DOCKER_REPO = "sunilgupta"
+
+        IMAGE_NAME = "${DOCKER_REPO}/backend"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+
+            steps {
+
+                echo "====================================="
+                echo "Cloning Backend Source Code"
+                echo "====================================="
+
+                checkout scm
+
+                sh '''
+                echo "Current Branch:"
+                git branch
+
+                echo "Latest Commit:"
+                git log -1
+                '''
+            }
+        }
+
+        stage('Build Backend Application') {
+
+            steps {
+
+                echo "====================================="
+                echo "Building Spring Boot Application"
+                echo "====================================="
+
+                sh '''
+                mvn clean package -DskipTests
+
+                echo "Generated Artifacts:"
+                ls -ltr target/
+                '''
+            }
+        }
+
+        stage('Docker Login') {
+
+            steps {
+
+                echo "====================================="
+                echo "Docker Hub Login"
+                echo "====================================="
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Build Backend Docker Image') {
+
+            steps {
+
+                echo "====================================="
+                echo "Building Docker Image"
+                echo "====================================="
+
+                sh """
+                docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+
+                docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+
+                echo "Docker Images Created"
+
+                docker images | grep backend
+                """
+            }
+        }
+
+        stage('Push Docker Image') {
+
+            steps {
+
+                echo "====================================="
+                echo "Pushing Docker Image To Docker Hub"
+                echo "====================================="
+
+                sh """
+                docker push ${IMAGE_NAME}:${IMAGE_TAG}
+
+                docker push ${IMAGE_NAME}:latest
+                """
+            }
+        }
+
+        stage('Deploy Backend') {
+
+            steps {
+
+                echo "====================================="
+                echo "Deploying Backend Application"
+                echo "====================================="
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'mysql-creds',
+                        usernameVariable: 'DB_USER',
+                        passwordVariable: 'DB_PASSWORD'
+                    )
+                ]) {
+
+                    sshagent(['deploy-key']) {
+
+                        sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@${BACKEND_IP} '
+
+                        echo "Pulling Latest Backend Image..."
+                        docker pull ${IMAGE_NAME}:latest
+
+                        echo "Stopping Existing Container..."
+                        docker stop backend || true
+
+                        echo "Removing Existing Container..."
+                        docker rm backend || true
+
+                        echo "Starting Backend Container..."
+
+                        docker run -d \
+                        --name backend \
+                        --restart unless-stopped \
+                        -p 8080:8080 \
+                        -e DB_URL=jdbc:mysql://${MYSQL_IP}:3306/myappdb \
+                        -e DB_USER=${DB_USER} \
+                        -e DB_PASSWORD=${DB_PASSWORD} \
+                        ${IMAGE_NAME}:latest
+
+                        echo "Running Containers:"
+                        docker ps
+
+                        echo "Backend Logs:"
+                        sleep 10
+                        docker logs backend --tail 50
+
+                        '
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+
+        success {
+
+            echo "✅ Backend Deployment Successful"
+
+        }
+
+        failure {
+
+            echo "❌ Backend Deployment Failed"
+
+        }
+
+        always {
+
+            echo "Pipeline Finished"
+
+        }
+    }
+}
+
+
+
+===================================== If u want Email Notifications and all after Build And Deployment success ============================
+
+pipeline {
+
+    agent any
+
+    environment {
+
+        BACKEND_IP = "10.10.10.20"
+        MYSQL_IP   = "10.10.10.30"
+
+        DOCKER_REPO = "sunilgupta"
+
+        IMAGE_NAME = "${DOCKER_REPO}/backend"
+        IMAGE_TAG  = "${BUILD_NUMBER}"
+
+        EMAIL_TO = "sunil.gupta@company.com"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+
+            steps {
+
+                echo "================================="
+                echo "CHECKOUT SOURCE CODE"
+                echo "================================="
+
+                checkout scm
+
+                sh '''
+                    git log -1
+                '''
+            }
+        }
+
+        stage('Build Application') {
+
+            steps {
+
+                echo "================================="
+                echo "BUILD SPRING BOOT APPLICATION"
+                echo "================================="
+
+                sh '''
+                    mvn clean package -DskipTests
+
+                    echo "Generated Files"
+                    ls -ltr target/
+                '''
+            }
+        }
+
+        stage('Docker Login') {
+
+            steps {
+
+                echo "================================="
+                echo "DOCKER LOGIN"
+                echo "================================="
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+
+            steps {
+
+                echo "================================="
+                echo "BUILD DOCKER IMAGE"
+                echo "================================="
+
+                sh """
+                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+
+                    docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+
+                    docker images | grep backend
+                """
+            }
+        }
+
+        stage('Push Docker Image') {
+
+            steps {
+
+                echo "================================="
+                echo "PUSH IMAGE TO DOCKER HUB"
+                echo "================================="
+
+                sh """
+                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
+
+                    docker push ${IMAGE_NAME}:latest
+                """
+            }
+        }
+
+        stage('Deploy Backend') {
+
+            steps {
+
+                echo "================================="
+                echo "DEPLOY BACKEND"
+                echo "================================="
+
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'mysql-creds',
+                        usernameVariable: 'DB_USER',
+                        passwordVariable: 'DB_PASSWORD'
+                    )
+                ]) {
+
+                    sshagent(['deploy-key']) {
+
+                        sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@${BACKEND_IP} '
+
+                        echo "Pulling latest image..."
+                        docker pull ${IMAGE_NAME}:latest
+
+                        echo "Stopping container..."
+                        docker stop backend || true
+
+                        echo "Removing container..."
+                        docker rm backend || true
+
+                        echo "Starting backend..."
+
+                        docker run -d \
+                        --name backend \
+                        --restart unless-stopped \
+                        -p 8080:8080 \
+                        -e DB_URL=jdbc:mysql://${MYSQL_IP}:3306/myappdb \
+                        -e DB_USER=${DB_USER} \
+                        -e DB_PASSWORD=${DB_PASSWORD} \
+                        ${IMAGE_NAME}:latest
+
+                        echo "Container Status"
+                        docker ps
+
+                        echo "Application Logs"
+                        sleep 15
+
+                        docker logs backend --tail 100
+
+                        '
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+
+        success {
+
+            emailext(
+                subject: "SUCCESS | ${JOB_NAME} #${BUILD_NUMBER}",
+                body: """
+                Hello Team,
+
+                Backend deployment completed successfully.
+
+                Job Name      : ${JOB_NAME}
+                Build Number  : ${BUILD_NUMBER}
+                Build URL     : ${BUILD_URL}
+
+                Backend Server: ${BACKEND_IP}
+
+                Status        : SUCCESS
+
+                Complete Console Logs are attached.
+
+                Regards,
+                Jenkins
+                """,
+                attachLog: true,
+                compressLog: true,
+                to: "${EMAIL_TO}"
+            )
+        }
+
+        failure {
+
+            emailext(
+                subject: "FAILED | ${JOB_NAME} #${BUILD_NUMBER}",
+                body: """
+                Hello Team,
+
+                Backend deployment failed.
+
+                Job Name      : ${JOB_NAME}
+                Build Number  : ${BUILD_NUMBER}
+                Build URL     : ${BUILD_URL}
+
+                Backend Server: ${BACKEND_IP}
+
+                Status        : FAILED
+
+                Complete Console Logs are attached.
+
+                Regards,
+                Jenkins
+                """,
+                attachLog: true,
+                compressLog: true,
+                to: "${EMAIL_TO}"
+            )
+        }
+
+        always {
+
+            echo "Pipeline Finished"
+        }
+    }
+}
+

@@ -1,0 +1,69 @@
+Copilot said:
+
+Since you now have a separate MySQL server, the architecture should look like:
+GitHub
+   |
+   v
+Jenkins
+   |
+   v
+Docker Hub
+   |
+   v
+Backend Server (Docker Container)
+   |
+   v
+MySQL Server (Docker Container
+
+
+The backend container will connect to the MySQL server using the MySQL server private IP.
+
+Step 1: Install Docker on MySQL Server
+
+Login to MySQL server:
+
+sudo apt update
+sudo apt install docker.io -y
+
+sudo systemctl enable docker
+sudo systemctl start docker
+
+Verify:
+docker --version
+
+Step 2: Create a Persistent Volume
+
+Create a directory for MySQL data:
+sudo mkdir -p /data/mysql
+sudo chmod -R 777 /data/mysql
+
+
+Step 3: Start MySQL Container
+
+docker run -d \
+--name mysql \
+--restart unless-stopped \
+-p 3306:3306 \
+-v /data/mysql:/var/lib/mysql \
+-e MYSQL_ROOT_PASSWORD=Root@123 \
+-e MYSQL_DATABASE=myappdb \
+-e MYSQL_USER=appuser \
+-e MYSQL_PASSWORD=AppUser@123 \
+mysql:8.0
+
+
+Check:
+docker ps
+
+Step 4: Verify MySQL Container
+
+Enter container:
+docker exec -it mysql bash
+
+Login:
+mysql -u root -p
+
+Show databases:
+SHOW DATABASES;
+
+

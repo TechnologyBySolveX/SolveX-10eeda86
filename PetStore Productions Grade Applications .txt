@@ -1,0 +1,221 @@
+Below is the production grade Applications using below tools for our pet store applications with Architecure and all 
+
+A Docker + Jenkins + AWS architecture is simpler, cheaper, and easier to maintain while still being production-grade.
+
+Production Architecture
+
+Users
+  │
+  ▼
+Route53
+  │
+  ▼
+CloudFront
+  │
+  ▼
+Application Load Balancer (ALB)
+  │
+  ├── React Frontend (Nginx Docker Container)
+  │
+  └── Spring Boot Backend (Docker Container)
+              │
+              ▼
+         AWS RDS MySQL
+              │
+              ▼
+       Automated Backups
+
+Monitoring:
+CloudWatch
+
+Logging:
+CloudWatch Logs
+
+CI/CD:
+GitHub → Jenkins → Docker → EC2
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+AWS Components
+Networking
+VPC
+
+Create:
+
+PetStore-VPC
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+Subnets
+
+Public Subnet 1
+Public Subnet 2
+
+Private Subnet 1
+Private Subnet 2
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+Security Groups
+Load Balancer
+
+Allow:
+
+80
+443
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+EC2
+
+Allow:
+
+22 (Your IP only)
+8080 (ALB only)
+80 (ALB only)
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+RDS
+
+Allow:
+
+3306 (EC2 only)
+Never expose MySQL publicly.
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+Jenkins Flow
+
+Pipeline:
+
+
+Git Pull
+    ↓
+Build
+    ↓
+Unit Test
+    ↓
+Sonar Scan
+    ↓
+Docker Build
+    ↓
+Docker Push
+    ↓
+Deploy EC2
+    ↓
+Smoke Test
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+CloudWatch Logs
+
+Track:
+
+Login failures
+API exceptions
+Order failures
+Payment failures
+Email failures
+SMS failures
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+Monitoring
+EC2 Monitoring
+
+CloudWatch Metrics:
+
+
+CPU
+Memory
+Network
+Disk
+
+
+Create Alerts:
+
+CPU > 80%
+Memory > 85%
+Disk > 90%
+
+Application Monitoring
+
+Add Actuator.
+
+spring-boot-starter-actuator
+
+Health Endpoint:
+/actuator/health
+
+Metrics Endpoint:
+/actuator/prometheus
+
+Monitor:
+Request count
+Response time
+JVM memory
+Threads
+Errors
+
+
+_____________________________________________________________________________________________________
+
+Recommended Production Stack
+
+Frontend:
+React + Nginx + Docker
+
+Backend:
+Spring Boot + Docker
+
+Database:
+AWS RDS MySQL
+
+CI/CD:
+GitHub + Jenkins
+
+Container Registry:
+AWS ECR
+
+Load Balancer:
+AWS ALB
+
+SSL:
+AWS ACM
+
+DNS:
+Route53
+
+Email:
+AWS SES
+
+SMS:
+AWS SNS
+
+Monitoring:
+CloudWatch
+
+Security:
+AWS WAF + Security Groups
+
+Caching:
+CloudFront
+
+Hosting:
+EC2 (2 instances recommended)
+
+
+
+

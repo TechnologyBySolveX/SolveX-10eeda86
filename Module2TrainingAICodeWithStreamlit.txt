@@ -1,0 +1,237 @@
+Complete Streamlit Application  using groq And Python Streamlit 
+
+import streamlit as st
+from groq import Groq
+
+# -----------------------------
+# Groq Client
+# -----------------------------
+client = Groq(
+    api_key=st.secrets["GROQ_API_KEY"]
+)
+
+MODEL = "llama-3.3-70b-versatile"
+
+# -----------------------------
+# Function
+# -----------------------------
+
+def ask_groq(prompt):
+
+    response = client.chat.completions.create(
+        model=MODEL,
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.2,
+        max_tokens=1024
+    )
+
+    return response.choices[0].message.content
+
+# -----------------------------
+# UI
+# -----------------------------
+
+st.set_page_config(
+    page_title="AI Developer Assistant",
+    page_icon="🤖",
+    layout="wide"
+)
+
+st.title("🤖 AI Developer Assistant")
+
+option = st.sidebar.selectbox(
+    "Choose Feature",
+    [
+        "Prompt Engineering",
+        "Code Generator",
+        "Debugging Assistant",
+        "Refactoring Assistant",
+        "Code Explanation"
+    ]
+)
+
+# ======================================================
+# Prompt Engineering
+# ======================================================
+
+if option == "Prompt Engineering":
+
+    st.header("Prompt Engineering Assistant")
+
+    user_prompt = st.text_area(
+        "Enter a Weak Prompt"
+    )
+
+    if st.button("Improve Prompt"):
+
+        with st.spinner("Improving prompt..."):
+
+            prompt = f"""
+            You are a Prompt Engineering Expert.
+
+            Improve the following software development prompt.
+
+            Prompt:
+            {user_prompt}
+
+            Return:
+            1. Improved Prompt
+            2. Why it is better
+            """
+
+            result = ask_groq(prompt)
+
+            st.success(result)
+
+# ======================================================
+# Code Generator
+# ======================================================
+
+elif option == "Code Generator":
+
+    st.header("Code Generator")
+
+    language = st.selectbox(
+        "Programming Language",
+        [
+            "Python",
+            "Java",
+            "JavaScript",
+            "Spring Boot"
+        ]
+    )
+
+    task = st.text_area(
+        "Describe Code Requirement"
+    )
+
+    if st.button("Generate Code"):
+
+        with st.spinner("Generating code..."):
+
+            prompt = f"""
+            Generate {language} code.
+
+            Requirement:
+            {task}
+
+            Include:
+            - Best Practices
+            - Comments
+            - Error Handling
+            """
+
+            result = ask_groq(prompt)
+
+            st.code(result)
+
+# ======================================================
+# Debugging
+# ======================================================
+
+elif option == "Debugging Assistant":
+
+    st.header("Debugging Assistant")
+
+    code = st.text_area(
+        "Paste Buggy Code"
+    )
+
+    if st.button("Debug Code"):
+
+        with st.spinner("Analyzing code..."):
+
+            prompt = f"""
+            You are a Senior Software Engineer.
+
+            Analyze this code.
+
+            Find:
+            - Bugs
+            - Security Problems
+            - Performance Issues
+
+            Code:
+            {code}
+            """
+
+            result = ask_groq(prompt)
+
+            st.write(result)
+
+# ======================================================
+# Refactoring
+# ======================================================
+
+elif option == "Refactoring Assistant":
+
+    st.header("Refactoring Assistant")
+
+    code = st.text_area(
+        "Paste Code"
+    )
+
+    if st.button("Refactor"):
+
+        with st.spinner("Refactoring code..."):
+
+            prompt = f"""
+            Refactor this code.
+
+            Improve:
+            - Readability
+            - Maintainability
+            - Performance
+
+            Provide:
+            1. Refactored Code
+            2. Explanation
+
+            Code:
+            {code}
+            """
+
+            result = ask_groq(prompt)
+
+            st.write(result)
+
+# ======================================================
+# Code Explanation
+# ======================================================
+
+elif option == "Code Explanation":
+
+    st.header("Code Explanation Assistant")
+
+    code = st.text_area(
+        "Paste Code To Explain"
+    )
+
+    if st.button("Explain Code"):
+
+        with st.spinner("Explaining code..."):
+
+            prompt = f"""
+            Explain the following code
+            in simple language.
+
+            Include:
+            - Purpose
+            - Logic
+            - Example
+            - Complexity
+
+            Code:
+            {code}
+            """
+
+            result = ask_groq(prompt)
+
+            st.write(result)
+			
+			

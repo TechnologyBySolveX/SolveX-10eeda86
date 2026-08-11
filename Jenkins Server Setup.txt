@@ -1,0 +1,258 @@
+Step 1: Install Required Tools on Jenkins Server
+
+sudo apt update
+
+sudo apt install docker.io -y
+
+sudo systemctl enable docker
+sudo systemctl start docker
+
+docker --version
+
+
+Install Jenkins plugins:
+Git
+GitHub Integration
+Docker
+Docker Pipeline
+SSH Agent
+Pipeline
+
+
+
+Step 2: Configure Docker Hub Credentials
+
+In Jenkins:
+
+Manage Jenkins
+→ Credentials
+→ Global
+→ Add Credentials
+
+Create:
+ID: dockerhub-creds
+Username: your_dockerhub_username
+Password: your_dockerhub_password
+``
+Step 3: Configure SSH Access to Servers
+
+On Jenkins server generate SSH key:
+
+ssh-keygen -t rsa -b 4096
+
+Copy public key to Frontend Server:
+ssh-copy-id ubuntu@frontend-server
+
+Copy public key to Backend Server:
+ssh-copy-id ubuntu@backend-server
+
+Verify:
+ssh ubuntu@frontend-server
+ssh ubuntu@backend-server
+
+Add private key inside Jenkins:
+
+Manage Jenkins
+→ Credentials
+→ Add Credentials
+→ SSH Username with Private Key
+
+ID: deploy-key
+Username: ubuntu
+
+
+Step 4: Configure GitHub Webhook
+
+GitHub Repository:
+
+Settings
+→ Webhooks
+→ Add Webhook
+
+Payload URL:
+http://<jenkins-server>:8080/github-webhook/
+
+Content Type:
+application/json
+
+Events:
+Just push events
+
+Now every push to main branch triggers Jenkins automatically.
+
+Step 5: Dockerize Frontend
+
+Example:
+
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+RUN npm run build
+
+FROM nginx:alpine
+
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
+
+Step 6: Dockerize Backend
+
+Example:
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+COPY target/*.jar app.jar
+
+EXPOSE 8080
+
+ENTRYPOINT ["java","-jar","app.jar"]
+
+
+Step 7: Create Jenkins Pipeline
+
+Create a Jenkinsfile in GitHub.
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_USER = 'your-dockerhub-user'
+        FRONTEND_IMAGE = "${DOCKER_USER}/frontend-app"
+        BACKEND_IMAGE = "${DOCKER_USER}/backend-app"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                url: 'https://github.com/company/project.git'
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                dir('backend') {
+                    sh 'mvn clean package -DskipTests'
+                }
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-creds',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASS'
+                    )
+                ]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
+            }
+        }
+
+        stage('Build Images') {
+            steps {
+
+                dir('frontend') {
+                    sh "docker build -t ${FRONTEND_IMAGE}:${BUILD_NUMBER} ."
+                    sh "docker tag ${FRONTEND_IMAGE}:${BUILD_NUMBER} ${FRONTEND_IMAGE}:latest"
+                }
+
+                dir('backend') {
+                    sh "docker build -t ${BACKEND_IMAGE}:${BUILD_NUMBER} ."
+                    sh "docker tag ${BACKEND_IMAGE}:${BUILD_NUMBER} ${BACKEND_IMAGE}:latest"
+                }
+            }
+        }
+
+        stage('Push Images') {
+            steps {
+                sh "docker push ${FRONTEND_IMAGE}:${BUILD_NUMBER}"
+                sh "docker push ${FRONTEND_IMAGE}:latest"
+
+                sh "docker push ${BACKEND_IMAGE}:${BUILD_NUMBER}"
+                sh "docker push ${BACKEND_IMAGE}:latest"
+            }
+        }
+
+        stage('Deploy Frontend') {
+            steps {
+                sshagent(['deploy-key']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ubuntu@FRONTEND_IP '
+                    docker pull your-dockerhub-user/frontend-app:latest &&
+                    docker stop frontend || true &&
+                    docker rm frontend || true &&
+                    docker run -d \
+                    --name frontend \
+                    -p 80:80 \
+                    your-dockerhub-user/frontend-app:latest
+                    '
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy Backend') {
+            steps {
+                sshagent(['deploy-key']) {
+                    sh '''
+                    ssh -o StrictHostKeyChecking=no ubuntu@BACKEND_IP '
+                    docker pull your-dockerhub-user/backend-app:latest &&
+                    docker stop backend || true &&
+                    docker rm backend || true &&
+                    docker run -d \
+                    --name backend \
+                    -p 8080:8080 \
+                    your-dockerhub-user/backend-app:latest
+                    '
+                    '''
+                }
+            }
+        }
+    }
+}
+
+Step 8: Configure MySQL Server
+
+MySQL server runs separately.
+
+Example:
+
+docker run -d \
+--name mysql \
+-e MYSQL_ROOT_PASSWORD=root123 \
+-e MYSQL_DATABASE=appdb \
+-p 3306:3306 \
+mysql:8
+
+Backend application.properties:
+spring.datasource.url=jdbc:mysql://MYSQL_SERVER_IP:3306/appdb
+spring.datasource.username=root
+spring.datasource.password=root123
+
+
+
+1. Store Server IPs in Jenkins Environment Variables
+Option 1: Jenkins Global Environment Variables
+
+Go to:
+
+Manage Jenkins
+→ System
+→ Global Properties
+→ Environment Variables
+
+Add:
+FRONTEND_IP=10.10.10.11
+BACKEND_IP=10.10.10.12
+MYSQL_IP=10.10.10.13

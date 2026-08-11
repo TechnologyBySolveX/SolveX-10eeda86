@@ -1,0 +1,327 @@
+Complete Streamlit Code
+
+import streamlit as st
+from groq import Groq
+
+# =====================================================
+# PAGE CONFIG
+# =====================================================
+
+st.set_page_config(
+    page_title="AI DevOps Assistant",
+    page_icon="🚀",
+    layout="wide"
+)
+
+# =====================================================
+# GROQ CONFIGURATION
+# =====================================================
+
+client = Groq(
+    api_key=st.secrets["GROQ_API_KEY"]
+)
+
+MODEL = "llama-3.3-70b-versatile"
+
+# =====================================================
+# HELPER FUNCTION
+# =====================================================
+
+def ask_groq(prompt):
+
+    try:
+
+        response = client.chat.completions.create(
+            model=MODEL,
+            messages=[
+                {
+                    "role": "system",
+                    "content": """
+                    You are a Senior DevOps Engineer and AI DevOps Assistant.
+                    Help users with:
+                    - Testing
+                    - CI/CD
+                    - Jenkins
+                    - GitHub Actions
+                    - Docker
+                    - Kubernetes
+                    - Log Analysis
+                    - Deployment Troubleshooting
+                    """
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0.3,
+            max_tokens=2000
+        )
+
+        return response.choices[0].message.content
+
+    except Exception as e:
+        return f"Error: {str(e)}"
+
+# =====================================================
+# HEADER
+# =====================================================
+
+st.title("🚀 AI DevOps Assistant")
+
+st.markdown("""
+AI-powered DevOps assistant using **Groq LLM**.
+
+### Features
+✅ Log Analysis
+
+✅ AI Testing Assistant
+
+✅ CI/CD Pipeline Review
+
+✅ Deployment Failure Analysis
+
+✅ DevOps Chatbot
+""")
+
+# =====================================================
+# SIDEBAR
+# =====================================================
+
+menu = st.sidebar.selectbox(
+    "Select Module",
+    [
+        "Log Analyzer",
+        "AI Testing Assistant",
+        "CI/CD Reviewer",
+        "Deployment Failure Assistant",
+        "DevOps Chatbot"
+    ]
+)
+
+# =====================================================
+# LOG ANALYZER
+# =====================================================
+
+if menu == "Log Analyzer":
+
+    st.header("📋 Jenkins / Docker / Kubernetes Log Analyzer")
+
+    logs = st.text_area(
+        "Paste Logs Here",
+        height=300,
+        placeholder="""
+ERROR:
+java.lang.OutOfMemoryError: Java heap space
+Build failed
+"""
+    )
+
+    if st.button("Analyze Logs"):
+
+        if logs:
+
+            with st.spinner("Analyzing logs..."):
+
+                prompt = f"""
+                Analyze these logs:
+
+                {logs}
+
+                Provide:
+
+                1. Root Cause
+                2. Severity
+                3. Recommended Fix
+                4. Verification Steps
+                5. Prevention Strategy
+
+                Format professionally.
+                """
+
+                result = ask_groq(prompt)
+
+                st.markdown(result)
+
+# =====================================================
+# AI TESTING ASSISTANT
+# =====================================================
+
+elif menu == "AI Testing Assistant":
+
+    st.header("✅ AI Test Case Generator")
+
+    feature = st.text_input(
+        "Enter Feature Name",
+        placeholder="User Login API"
+    )
+
+    if st.button("Generate Test Cases"):
+
+        with st.spinner("Generating test cases..."):
+
+            prompt = f"""
+            Generate software testing scenarios for:
+
+            {feature}
+
+            Include:
+
+            1. Positive Test Cases
+            2. Negative Test Cases
+            3. Edge Cases
+            4. API Validation Cases
+            5. Security Cases
+            6. Performance Checks
+
+            Format clearly.
+            """
+
+            result = ask_groq(prompt)
+
+            st.markdown(result)
+
+# =====================================================
+# CI/CD REVIEWER
+# =====================================================
+
+elif menu == "CI/CD Reviewer":
+
+    st.header("🔄 Jenkins / GitHub Actions Reviewer")
+
+    pipeline_code = st.text_area(
+        "Paste Jenkinsfile or GitHub Actions YAML",
+        height=300
+    )
+
+    if st.button("Review Pipeline"):
+
+        with st.spinner("Reviewing CI/CD Pipeline..."):
+
+            prompt = f"""
+            Review this CI/CD pipeline.
+
+            Pipeline:
+
+            {pipeline_code}
+
+            Analyze:
+
+            - Security Best Practices
+            - Missing Stages
+            - Build Optimization
+            - Docker Best Practices
+            - Deployment Improvements
+            - Recommendations
+
+            Give a detailed review.
+            """
+
+            result = ask_groq(prompt)
+
+            st.markdown(result)
+
+# =====================================================
+# DEPLOYMENT FAILURE ASSISTANT
+# =====================================================
+
+elif menu == "Deployment Failure Assistant":
+
+    st.header("⚠️ Deployment Troubleshooter")
+
+    error_message = st.text_area(
+        "Paste Error Message",
+        height=250,
+        placeholder="""
+CrashLoopBackOff
+Connection Refused
+ImagePullBackOff
+Deployment Failed
+"""
+    )
+
+    if st.button("Investigate Failure"):
+
+        with st.spinner("Investigating issue..."):
+
+            prompt = f"""
+            Investigate the following deployment issue:
+
+            {error_message}
+
+            Provide:
+
+            1. Root Cause
+            2. Possible Reasons
+            3. Troubleshooting Steps
+            4. Commands to Execute
+            5. Prevention Measures
+
+            Give detailed explanation.
+            """
+
+            result = ask_groq(prompt)
+
+            st.markdown(result)
+
+# =====================================================
+# DEVOPS CHATBOT
+# =====================================================
+
+elif menu == "DevOps Chatbot":
+
+    st.header("🤖 DevOps AI Mentor")
+
+    question = st.text_area(
+        "Ask Any DevOps Question"
+    )
+
+    if st.button("Ask AI"):
+
+        with st.spinner("Thinking..."):
+
+            prompt = f"""
+            You are a Senior DevOps Mentor.
+
+            Answer:
+
+            {question}
+
+            Include:
+
+            - Explanation
+            - Real-world Example
+            - Best Practices
+            - Common Mistakes
+
+            Make the answer beginner friendly.
+            """
+
+            result = ask_groq(prompt)
+
+            st.markdown(result)
+
+# =====================================================
+# FOOTER
+# =====================================================
+
+st.divider()
+
+st.markdown("""
+### 🛠 Tech Stack
+
+- Python
+- Streamlit
+- Groq LLM
+- Prompt Engineering
+
+### 📚 AI DevOps Topics Covered
+
+- AI for Testing
+- CI/CD Review
+- Log Analysis
+- Deployment Troubleshooting
+- DevOps Automation
+
+Built using Streamlit + Groq.
+""")
