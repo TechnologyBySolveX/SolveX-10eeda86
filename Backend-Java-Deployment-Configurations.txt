@@ -1,0 +1,33 @@
+Backend Deployment
+
+Spring Boot Docker
+
+Build jar:
+
+mvn clean package
+
+Dockerize:
+petstore-api
+
+Run:
+port 8080
+
+
+----------------------------------------------------------------------------------------------------------
+
+
+CI/CD Flow
+
+Backend
+Shell
+1
+git pull
+2
+mvn clean package
+3
+docker build
+4
+docker push
+5
+docker run
+
