@@ -1,0 +1,66 @@
+src/
+│
+├── components/          # Reusable UI components
+│   ├── Button.js
+│   ├── Input.js
+│   └── Navbar.js
+│
+├── pages/               # Page-level components (routes)
+│   ├── Login.js
+│   ├── Dashboard.js
+│   ├── Profile.js
+│   └── Settings.js
+│
+├── features/            # Feature-specific modules
+│   ├── auth/            # Authentication (login, signup, logout)
+│   │   ├── AuthContext.js
+│   │   ├── LoginForm.js
+│   │   └── authService.js
+│   ├── streaming/       # Streaming-related features
+│   │   ├── StreamPlayer.js
+│   │   └── streamService.js
+│   └── chat/            # Chat or messaging features
+│       ├── ChatBox.js
+│       └── chatService.js
+│
+├── hooks/               # Custom React hooks
+│   ├── useAuth.js
+│   └── useFetch.js
+│
+├── context/             # Global contexts
+│   ├── ThemeContext.js
+│   └── UserContext.js
+│
+├── services/            # API calls / backend integration
+│   ├── api.js
+│   └── userService.js
+│
+├── utils/               # Utility functions/helpers
+│   ├── validators.js
+│   └── formatters.js
+│
+├── assets/              # Images, fonts, styles
+│   ├── logo.png
+│   └── styles.css
+│
+├── App.js               # Root component
+├── index.js             # Entry point
+└── routes.js            # Centralized route definitions
+
+
+
+And tables Are :
+
+for Altering the TimeStamp 
+ALTER TABLE users 
+MODIFY user_created_times TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+
+And for Routing you needs to install 
+npm install react-router-dom
+
+for solving the validations problems 
+npm install prop-types
+
+

@@ -1,0 +1,38 @@
+Step 3: Docker Compose ON EACH EC2
+
+
+React EC2 (docker-compose.yml)
+
+
+
+version: "3.8"
+
+services:
+  frontend:
+    image: yourorg/react-frontend:latest
+    container_name: react_frontend
+    ports:
+      - "80:80"
+    restart: always
+``
+
+
+
+
+=============================== Backend parts ===============\
+
+Backend EC2 (docker-compose.yml)
+
+version: "3.8"
+
+services:
+  backend:
+    image: yourorg/backend-api:latest
+    container_name: backend_api
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    restart: always
+	
+	

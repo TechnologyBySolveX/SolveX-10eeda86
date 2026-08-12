@@ -1,0 +1,140 @@
+src/
+│
+├── components/          # Reusable UI components
+│   ├── Button.js
+│   ├── Input.js
+│   └── Navbar.js
+│
+├── pages/               # Page-level components (routes)
+│   ├── Login.js
+│   ├── Dashboard.js
+│   ├── Profile.js
+│   └── Settings.js
+│
+├── features/            # Feature-specific modules
+│   ├── auth/            # Authentication (login, signup, logout)
+│   │   ├── AuthContext.js
+│   │   ├── LoginForm.js
+│   │   └── authService.js
+│   ├── streaming/       # Streaming-related features
+│   │   ├── StreamPlayer.js
+│   │   └── streamService.js
+│   └── chat/            # Chat or messaging features
+│       ├── ChatBox.js
+│       └── chatService.js
+│
+├── hooks/               # Custom React hooks
+│   ├── useAuth.js
+│   └── useFetch.js
+│
+├── context/             # Global contexts
+│   ├── ThemeContext.js
+│   └── UserContext.js
+│
+├── services/            # API calls / backend integration
+│   ├── api.js
+│   └── userService.js
+│
+├── utils/               # Utility functions/helpers
+│   ├── validators.js
+│   └── formatters.js
+│
+├── assets/              # Images, fonts, styles
+│   ├── logo.png
+│   └── styles.css
+│
+├── App.js               # Root component
+├── index.js             # Entry point
+└── routes.js            # Centralized route definitions
+
+
+
+And tables Are :
+
+for Altering the TimeStamp 
+ALTER TABLE users 
+MODIFY user_created_times TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP;
+
+
+
+What Features You Can Build with These Skills
+✅ One‑to‑one chat
+✅ Group chat
+✅ Online/offline status
+✅ Typing indicator
+✅ Audio calling
+✅ Video calling
+✅ Screen sharing
+✅ Call notifications
+
+✅ Final Honest Advice
+
+Chat apps are medium difficulty, Audio/Video apps are advanced.
+Master chat + WebSockets first, then move to WebRTC.
+
+You’re thinking in the right tech stack — React + Node is an industry‑proven choice.
+
+
+=======================================
+
+Tech Stack:
+
+Frontend: React.js
+Backend: Node.js + Express
+Realtime: Socket.IO + WebRTC
+Database: MongoDB
+
+==================================
+
+
+=======================================================
+
+MINI FEATURES TO BUILD STEP‑BY‑STEP
+✅ Phase 1:
+
+User login
+One‑to‑one chat
+
+✅ Phase 2:
+
+Group chat
+Online/offline status
+Typing indicator
+
+✅ Phase 3:
+
+Audio calling
+Video calling
+Call notifications
+
+✅ Phase 4:
+
+Screen sharing
+Call recording (advanced)
+Scaling support
+
+
+✅ FINAL HONEST ADVICE
+
+Chat apps are intermediate.
+Audio/Video apps are advanced.
+WebRTC is the hardest part — take it slow.
+
+This stack (React + Node + Socket.IO + WebRTC) is industry‑grade and used by real products.
+
+
+============================================================================================================
+
+And for Routing you needs to install 
+npm install react-router-dom
+npm install react-router-dom@6
+
+for solving the validations problems 
+npm install prop-types
+
+for Communications 
+npm install express socket.io
+
+
+
+

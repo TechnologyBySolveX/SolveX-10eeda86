@@ -1,0 +1,20 @@
+To build the Docker file We Can use below commands for it 
+
+docker build -t springboot-jsp-tomcat .
+
+After that If you are using MYSQL And MOngoDb database we can configured using below commands
+
+docker run -d \
+--network mynetwork \
+  --name mymongo \
+  -p 27017:27017 \
+   -v mongo_data:/data/db \
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=Admin@123 \
+  mongo
+  
+After that 
+docker exec -it mymongo mongosh -u admin -p Admin@123 --authenticationDatabase admin
+docker run -p 8081:8080 --name Springboot-app --network mynetwork --link mymongo:mongo -d springboot-jsp-tomcat:latest
+
+Aftrer that 

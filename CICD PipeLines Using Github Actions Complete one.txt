@@ -1,0 +1,516 @@
+Developer commits code → GitHub Repo
+
+GitHub Actions runs on push to main
+
+Builds Docker image
+
+Pushes image to Docker Hub
+
+EC2 instance pulls latest Docker image from Docker Hub
+
+Runs container with updated code
+
+GitHub Actions Workflow (.github/workflows/deploy.yml
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build Docker image
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/myapp:latest .
+
+      # Push Docker image
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+
+      # Deploy to EC2 via SSH
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+            docker stop myapp || true
+            docker rm myapp || true
+            docker run -d --name myapp -p 80:80 ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+
+
+
+
+And Secrrect keys Should be Defined Inside the github Repo Setting below is the way to do this 
+
+Secrets Needed
+You’ll need to configure these in your GitHub repo under Settings → Secrets and variables → Actions:
+
+DOCKER_USERNAME → your Docker Hub username
+
+DOCKER_PASSWORD → your Docker Hub password or access token
+
+EC2_HOST → public IP/DNS of your EC2 instance
+
+EC2_USER → usually ec2-user or ubuntu depending on AMI
+
+EC2_SSH_KEY → private key for SSH access
+
+
+
+And Rollback Strategy
+There are a few common approaches:
+
+Tagging Images by Build Number or Commit
+
+Each build gets a unique tag (e.g., myapp:build-123).
+
+The latest stable version is also tagged as myapp:stable.
+
+If deployment fails, EC2 can pull myapp:stable again.
+
+Keeping Previous Container Running
+
+Deploy new container alongside old one.
+
+If new container fails health checks, stop it and restart the old one.
+
+GitHub Actions Rollback Step
+
+Add a step in your workflow that triggers rollback if deployment fails.
+
+Updated GitHub Actions Workflow
+Here’s a sample .github/workflows/deploy.yml with rollback support:
+
+name: CI/CD Pipeline with Rollback
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: |
+          IMAGE_TAG=myapp:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/$IMAGE_TAG .
+          docker tag ${{ secrets.DOCKER_USERNAME }}/$IMAGE_TAG ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/$IMAGE_TAG
+          docker push ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            set -e
+            docker pull ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+            docker stop myapp || true
+            docker rm myapp || true
+            docker run -d --name myapp -p 80:80 ${{ secrets.DOCKER_USERNAME }}/myapp:latest
+
+      - name: Rollback if deploy fails
+        if: failure()
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "Deployment failed. Rolling back..."
+            docker stop myapp || true
+            docker rm myapp || true
+            docker run -d --name myapp -p 80:80 ${{ secrets.DOCKER_USERNAME }}/myapp:stable
+
+
+And I am building the Workflow for let’s sketch out a Blue‑Green Deployment workflow using GitHub Actions so you can see how it works in practice.
+
+🔹 Blue‑Green Deployment Concept
+Blue environment = current running version (stable).
+
+Green environment = new version being deployed.
+
+Traffic is routed to Blue until Green passes health checks.
+
+If Green is healthy → switch traffic to Green.
+
+If Green fails → rollback to Blue instantly.
+
+🔹 GitHub Actions Workflow Example
+Here’s a sample .github/workflows/blue-green.yml:
+
+
+name: Blue-Green Deployment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build and push Docker image
+      - name: Build and push Docker image
+        run: |
+          IMAGE_TAG=myapp:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/$IMAGE_TAG .
+          docker push ${{ secrets.DOCKER_USERNAME }}/$IMAGE_TAG
+
+      # Deploy to EC2 (Green environment)
+      - name: Deploy to EC2 (Green)
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
+            docker stop myapp-green || true
+            docker rm myapp-green || true
+            docker run -d --name myapp-green -p 8081:80 ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
+
+      # Health check
+      - name: Health check Green
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sleep 10
+            curl -f http://localhost:8081/health || exit 1
+
+      # Switch traffic to Green if healthy
+      - name: Switch traffic to Green
+        if: success()
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker stop myapp-blue || true
+            docker rm myapp-blue || true
+            docker rename myapp-green myapp-blue
+            echo "Traffic switched to Green (now Blue)."
+
+      # Rollback if health check fails
+      - name: Rollback to Blue
+        if: failure()
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "Health check failed. Keeping Blue running."
+            docker stop myapp-green || true
+            docker rm myapp-green || true
+
+
+And 
+
+
+Another Way for github Actions for blue Green Deployment :
+
+let’s extend your Blue‑Green Deployment workflow to include email notifications only. This way, your team gets notified whenever a deployment succeeds, fails, or triggers a rollback.
+
+Updated GitHub Actions Workflow (.github/workflows/blue-green.yml)
+
+name: Blue-Green Deployment with Email Notifications
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build and push Docker image
+      - name: Build and push Docker image
+        run: |
+          IMAGE_TAG=myapp:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/$IMAGE_TAG .
+          docker push ${{ secrets.DOCKER_USERNAME }}/$IMAGE_TAG
+
+      # Deploy to EC2 (Green environment)
+      - name: Deploy to EC2 (Green)
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
+            docker stop myapp-green || true
+            docker rm myapp-green || true
+            docker run -d --name myapp-green -p 8081:80 ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
+
+      # Health check
+      - name: Health check Green
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sleep 10
+            curl -f http://localhost:8081/health || exit 1
+
+      # Switch traffic to Green if healthy
+      - name: Switch traffic to Green
+        if: success()
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker stop myapp-blue || true
+            docker rm myapp-blue || true
+            docker rename myapp-green myapp-blue
+            echo "Traffic switched to Green (now Blue)."
+
+      # Rollback if health check fails
+      - name: Rollback to Blue
+        if: failure()
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "Health check failed. Keeping Blue running."
+            docker stop myapp-green || true
+            docker rm myapp-green || true
+
+      # ✅ Email Notification
+      - name: Send Email Notification
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: "Deployment Status - ${{ job.status }}"
+          body: |
+            Hello Team,
+
+            Deployment job finished with status: ${{ job.status }}
+
+            - Commit: ${{ github.sha }}
+            - Repository: ${{ github.repository }}
+            - Branch: ${{ github.ref }}
+
+            If status = failure, rollback was triggered automatically.
+
+            Regards,
+            CI/CD Pipeline
+          to: "team@example.com"
+          from: "ci-cd@example.com"
+
+
+
+Secrets Needed
+Store these in GitHub Secrets:
+
+DOCKER_USERNAME → Docker Hub username
+
+DOCKER_PASSWORD → Docker Hub password/token
+
+EC2_HOST → EC2 public IP/DNS
+
+EC2_USER → EC2 username (ec2-user or ubuntu)
+
+EC2_SSH_KEY → EC2 private SSH key
+
+EMAIL_USER → SMTP username (e.g., Gmail address)
+
+EMAIL_PASS → SMTP password or app password
+
+
+
+And Another New Way is let’s enhance the email notifications so they include deployment logs and error messages when rollback happens. This way, your team doesn’t just get a “success/failure” email, but also the reason why.
+
+Updated GitHub Actions Workflow (with logs in email)
+
+name: Blue-Green Deployment with Email Notifications
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Login to Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build and push Docker image
+      - name: Build and push Docker image
+        run: |
+          IMAGE_TAG=myapp:${{ github.sha }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/$IMAGE_TAG .
+          docker push ${{ secrets.DOCKER_USERNAME }}/$IMAGE_TAG
+
+      # Deploy to EC2 (Green environment)
+      - name: Deploy to EC2 (Green)
+        id: deploy-green
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
+            docker stop myapp-green || true
+            docker rm myapp-green || true
+            docker run -d --name myapp-green -p 8081:80 ${{ secrets.DOCKER_USERNAME }}/myapp:${{ github.sha }}
+
+      # Health check
+      - name: Health check Green
+        id: health-check
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sleep 10
+            curl -f http://localhost:8081/health || (docker logs myapp-green && exit 1)
+
+      # Switch traffic to Green if healthy
+      - name: Switch traffic to Green
+        if: success()
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker stop myapp-blue || true
+            docker rm myapp-blue || true
+            docker rename myapp-green myapp-blue
+            echo "Traffic switched to Green (now Blue)."
+
+      # Rollback if health check fails
+      - name: Rollback to Blue
+        if: failure()
+        id: rollback
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "Health check failed. Keeping Blue running."
+            docker stop myapp-green || true
+            docker rm myapp-green || true
+
+      # ✅ Email Notification with logs
+      - name: Send Email Notification
+        if: always()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: "Deployment Status - ${{ job.status }}"
+          body: |
+            Hello Team,
+
+            Deployment job finished with status: ${{ job.status }}
+
+            - Commit: ${{ github.sha }}
+            - Repository: ${{ github.repository }}
+            - Branch: ${{ github.ref }}
+
+            Logs from deployment:
+            ---------------------
+            Deploy Step: ${{ steps.deploy-green.outcome }}
+            Health Check Step: ${{ steps.health-check.outcome }}
+            Rollback Step: ${{ steps.rollback.outcome }}
+
+            If status = failure, rollback was triggered automatically.
+            Please check container logs for more details.
+
+            Regards,
+            CI/CD Pipeline
+          to: "team@example.com"
+          from: "ci-cd@example.com"
+
+

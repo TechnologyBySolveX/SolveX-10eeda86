@@ -1,0 +1,23 @@
+2 mins ke liye hain -> Video - > read chunks by chunks And store Database (AWS S3 bucket) : Existing video 
+for Real time -> Live Interview -> So at that time how read the data of video ->saving database
+
+Streaming : 
+chats
+Create Account : with Different Username  id : Sunilg -> Sunils
+
+Audio
+video
+
+
+Tables Are : 
+
+CREATE TABLE users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+ 

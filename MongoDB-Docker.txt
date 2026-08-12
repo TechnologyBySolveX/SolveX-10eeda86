@@ -1,0 +1,84 @@
+docker run -d \
+  --name mongodb \
+  -p 27017:27017 \
+  -v mongo_data:/data/db \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=admin123 \
+  mongo --bind_ip_all
+  mongo:latest
+
+
+
+docker run -d \
+  --name mongodb \
+  --restart unless-stopped \
+  -p 27017:27017 \
+  -v mongo_data:/data/db \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=admin123 \
+  mongo:latest --bind_ip_all
+
+
+
+
+
+
+``
+
+mongosh "mongodb://admin:admin123@localhost:27017/admin"
+
+
+
+``
+
+
+sudo mkdir -p /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+ 
+ 
+
+
+docker run -d \
+  --name mongodb \
+  --network mynetwork \
+  --restart unless-stopped \
+  -p 27017:27017 \
+  -v mongo_data:/data/db \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=admin123 \
+  mongo:latest --bind_ip_all
+
+
+mongosh "mongodb://admin:admin123@18.60.255.234:27017/admin"
+
+
+Steps for Installing the Docker And mongoDB Images from Docker Hub 
+first Run below commands :
+sudo apt update 
+after that 
+sudo apt install -y ca-certificates curl gnupg lsb-release
+
+And then
+sudo mkdir -p /etc/apt/keyrings
+
+After that 
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list >/dev/null
+
+After that 
+sudo apt update
+
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+
+sudo systemctl enable docker
+sudo systemctl start docker
+docker --version

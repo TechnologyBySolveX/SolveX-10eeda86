@@ -1,0 +1,167 @@
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-02-13T05:46:13.547Z ERROR 1 --- [SolveX] [           main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'authController' defined in file [/usr/local/tomcat/webapps/ROOT/WEB-INF/classes/com/java/real/controller/AuthController.class]: org/apache/log4j/Logger
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1344) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1231) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:565) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:196) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1218) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1184) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1121) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:993) ~[spring-context-7.0.3.jar:7.0.3]
+        at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:620) ~[spring-context-7.0.3.jar:7.0.3]
+        at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756) ~[spring-boot-4.0.2.jar:4.0.2]
+        at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445) ~[spring-boot-4.0.2.jar:4.0.2]
+        at org.springframework.boot.SpringApplication.run(SpringApplication.java:321) ~[spring-boot-4.0.2.jar:4.0.2]
+        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.run(SpringBootServletInitializer.java:205) ~[spring-boot-4.0.2.jar:4.0.2]
+        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.createRootApplicationContext(SpringBootServletInitializer.java:181) ~[spring-boot-4.0.2.jar:4.0.2]
+        at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.onStartup(SpringBootServletInitializer.java:109) ~[spring-boot-4.0.2.jar:4.0.2]
+        at org.springframework.web.SpringServletContainerInitializer.onStartup(SpringServletContainerInitializer.java:171) ~[spring-web-7.0.3.jar:7.0.3]
+        at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4452) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:597) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:569) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:665) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.startup.HostConfig.deployWAR(HostConfig.java:962) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.startup.HostConfig$DeployWar.run(HostConfig.java:1900) ~[catalina.jar:10.1.52]
+        at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539) ~[na:na]
+        at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+        at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:81) ~[tomcat-util.jar:10.1.52]
+        at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:123) ~[na:na]
+        at org.apache.catalina.startup.HostConfig.deployWARs(HostConfig.java:766) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:417) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.startup.HostConfig.start(HostConfig.java:1618) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.startup.HostConfig.lifecycleEvent(HostConfig.java:300) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.util.LifecycleBase.fireLifecycleEvent(LifecycleBase.java:109) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.util.LifecycleBase.setStateInternal(LifecycleBase.java:389) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.util.LifecycleBase.setState(LifecycleBase.java:336) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:774) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:783) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1201) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1191) ~[catalina.jar:10.1.52]
+        at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264) ~[na:na]
+        at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:81) ~[tomcat-util.jar:10.1.52]
+        at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145) ~[na:na]
+        at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:747) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:201) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.core.StandardService.startInternal(StandardService.java:410) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:868) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.startup.Catalina.start(Catalina.java:758) ~[catalina.jar:10.1.52]
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[na:na]
+        at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77) ~[na:na]
+        at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[na:na]
+        at java.base/java.lang.reflect.Method.invoke(Method.java:569) ~[na:na]
+        at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:342) ~[bootstrap.jar:10.1.52]
+        at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:473) ~[bootstrap.jar:10.1.52]
+Caused by: java.lang.NoClassDefFoundError: org/apache/log4j/Logger
+        at com.java.real.controller.AuthController.<clinit>(AuthController.java:40) ~[classes/:0.0.1-SNAPSHOT]
+        at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method) ~[na:na]
+        at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77) ~[na:na]
+        at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45) ~[na:na]
+        at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500) ~[na:na]
+        at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:481) ~[na:na]
+        at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:194) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:106) ~[spring-beans-7.0.3.jar:7.0.3]
+        at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1338) ~[spring-beans-7.0.3.jar:7.0.3]
+        ... 59 common frames omitted
+Caused by: java.lang.ClassNotFoundException: org.apache.log4j.Logger
+        at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1377) ~[catalina.jar:10.1.52]
+        at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1186) ~[catalina.jar:10.1.52]
+        ... 68 common frames omitted
+
+13-Feb-2026 05:46:13.553 SEVERE [main] org.apache.catalina.startup.HostConfig.deployWAR Error deploying web application archive [/usr/local/tomcat/webapps/ROOT.war]
+        java.lang.IllegalStateException: Error starting child
+                at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:600)
+                at org.apache.catalina.core.ContainerBase.addChild(ContainerBase.java:569)
+                at org.apache.catalina.core.StandardHost.addChild(StandardHost.java:665)
+                at org.apache.catalina.startup.HostConfig.deployWAR(HostConfig.java:962)
+                at org.apache.catalina.startup.HostConfig$DeployWar.run(HostConfig.java:1900)
+                at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:539)
+                at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+                at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:81)
+                at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:123)
+                at org.apache.catalina.startup.HostConfig.deployWARs(HostConfig.java:766)
+                at org.apache.catalina.startup.HostConfig.deployApps(HostConfig.java:417)
+                at org.apache.catalina.startup.HostConfig.start(HostConfig.java:1618)
+                at org.apache.catalina.startup.HostConfig.lifecycleEvent(HostConfig.java:300)
+                at org.apache.catalina.util.LifecycleBase.fireLifecycleEvent(LifecycleBase.java:109)
+                at org.apache.catalina.util.LifecycleBase.setStateInternal(LifecycleBase.java:389)
+                at org.apache.catalina.util.LifecycleBase.setState(LifecycleBase.java:336)
+                at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:774)
+                at org.apache.catalina.core.StandardHost.startInternal(StandardHost.java:783)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+                at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1201)
+                at org.apache.catalina.core.ContainerBase$StartChild.call(ContainerBase.java:1191)
+                at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+                at org.apache.tomcat.util.threads.InlineExecutorService.execute(InlineExecutorService.java:81)
+                at java.base/java.util.concurrent.AbstractExecutorService.submit(AbstractExecutorService.java:145)
+                at org.apache.catalina.core.ContainerBase.startInternal(ContainerBase.java:747)
+                at org.apache.catalina.core.StandardEngine.startInternal(StandardEngine.java:201)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+                at org.apache.catalina.core.StandardService.startInternal(StandardService.java:410)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+                at org.apache.catalina.core.StandardServer.startInternal(StandardServer.java:868)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+                at org.apache.catalina.startup.Catalina.start(Catalina.java:758)
+                at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+                at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+                at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+                at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+                at org.apache.catalina.startup.Bootstrap.start(Bootstrap.java:342)
+                at org.apache.catalina.startup.Bootstrap.main(Bootstrap.java:473)
+        Caused by: org.apache.catalina.LifecycleException: Failed to start component [StandardEngine[Catalina].StandardHost[localhost].StandardContext[]]
+                at org.apache.catalina.util.LifecycleBase.handleSubClassException(LifecycleBase.java:404)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:179)
+                at org.apache.catalina.core.ContainerBase.addChildInternal(ContainerBase.java:597)
+                ... 37 more
+        Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'authController' defined in file [/usr/local/tomcat/webapps/ROOT/WEB-INF/classes/com/java/real/controller/AuthController.class]: org/apache/log4j/Logger
+                at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1344)
+                at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1231)
+                at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:565)
+                at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:525)
+                at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:333)
+                at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:371)
+                at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:331)
+                at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:196)
+                at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1218)
+                at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1184)
+                at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1121)
+                at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:993)
+                at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:620)
+                at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:756)
+                at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:445)
+                at org.springframework.boot.SpringApplication.run(SpringApplication.java:321)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.run(SpringBootServletInitializer.java:205)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.createRootApplicationContext(SpringBootServletInitializer.java:181)
+                at org.springframework.boot.web.servlet.support.SpringBootServletInitializer.onStartup(SpringBootServletInitializer.java:109)
+                at org.springframework.web.SpringServletContainerInitializer.onStartup(SpringServletContainerInitializer.java:171)
+                at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:4452)
+                at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:164)
+                ... 38 more
+        Caused by: java.lang.NoClassDefFoundError: org/apache/log4j/Logger
+                at com.java.real.controller.AuthController.<clinit>(AuthController.java:40)
+                at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+                at java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)
+                at java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
+                at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)
+                at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:481)
+                at org.springframework.beans.BeanUtils.instantiateClass(BeanUtils.java:194)
+                at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:106)
+                at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateBean(AbstractAutowireCapableBeanFactory.java:1338)
+                ... 59 more
+        Caused by: java.lang.ClassNotFoundException: org.apache.log4j.Logger
+                at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1377)
+                at org.apache.catalina.loader.WebappClassLoaderBase.loadClass(WebappClassLoaderBase.java:1186)
+                ... 68 more
+13-Feb-2026 05:46:13.561 INFO [main] org.apache.catalina.startup.HostConfig.deployWAR Deployment of web application archive [/usr/local/tomcat/webapps/ROOT.war] has finished in [14,389] ms
+13-Feb-2026 05:46:13.570 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+13-Feb-2026 05:46:13.598 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in [14540] milliseconds

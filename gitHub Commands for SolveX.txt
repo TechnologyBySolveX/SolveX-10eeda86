@@ -1,0 +1,180 @@
+Create Branch Sunil-9640
+Create Branch Sunil-7318
+
+Later Fix times : commit 10 to 12 Done changes after that like -> 12:30 PM first git pull main Branch in your local And then merge your changes 
+
+changes 
+
+We have one more Main Branch Name is : SolveXBranchName - > private repository
+
+
+
+for future used :
+
+Step-by-Step Git Workflow
+Make sure you’re on your branch (Sunil7318)
+git checkout Sunil7318
+Update your local main branch with the latest changes
+git checkout main
+git pull origin main
+ This ensures your local main has Sunil9640’s commits.
+ 
+Switch back to your branch
+git checkout Sunil7318
+Merge the updated main into your branch
+git merge main
+
+
+
+Best Practices
+Always create a PR instead of pushing directly to main.
+
+Use branch naming conventions (e.g., feature/login, bugfix/api-error).
+
+Add a clear PR description (what changed, why, testing steps).
+
+Enable branch protection rules in GitHub settings so that merging requires at least one reviewer’s approval.
+
+
+
+
+Configure the Rule
+
+In Branch name pattern, type main (or whichever branch you want to protect).
+
+Check the following options:
+
+✅ Require a pull request before merging
+
+✅ Require approvals (you can set the number of reviewers, usually 1 or 2).
+
+✅ Dismiss stale pull request approvals when new commits are pushed (optional, but recommended).
+
+✅ Require status checks to pass before merging (if you use CI/CD pipelines).
+
+
+Gmail Configurations :
+
+
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=${SPRING_MAIL_USERNAME}
+spring.mail.password=${SPRING_MAIL_PASSWORD}
+spring.mail.protocol=smtp
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true
+spring.mail.properties.mail.smtp.connectiontimeout=5000
+spring.mail.properties.mail.smtp.timeout=5000
+spring.mail.properties.mail.smtp.writetimeout=5000
+
+
+
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set environment variables from secrets
+        run: |
+          echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" >> $GITHUB_ENV
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> $GITHUB_ENV
+
+      - name: Debug environment (optional)
+        run: echo $SPRING_DATASOURCE_URL
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+
+
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    # Expose secrets as environment variables
+    env:
+      SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
+      SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+      SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Build with Maven
+        run: mvn clean install -Dmaven.test.skip=true
+
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker image
+        run: docker build -t sunilya96/testing_docker_ec2:latest .
+
+      - name: Publish image to Docker Hub
+        run: docker push sunilya96/testing_docker_ec2:latest
+
+
+  deploy:
+    needs: build
+    runs-on: [self-hosted, linux, x64, aws_ec2]
+
+    steps:
+
+      - name: Pull image from Docker Hub
+        run: docker pull sunilya96/testing_docker_ec2:latest
+
+      - name: Remove all <none> images
+        run: docker image prune -f
+
+      - name: Stop & remove old container if exists
+        run: |
+          docker ps -a --format '{{.Names}}' | grep -w springboot-app >/dev/null 2>&1 && \
+            docker stop springboot-app || true
+          docker ps -a --format '{{.Names}}' | grep -w springboot-app >/dev/null 2>&1 && \
+            docker rm springboot-app || true
+
+      - name: Ensure Docker network exists
+        run: |
+          docker network inspect mynetwork >/dev/null 2>&1 || \
+          docker network create mynetwork
+
+      
+      - name: Run new container
+        run: |
+          docker run -d \
+          --name springboot-app \
+          --network mynetwork \
+          -p 8081:8080 \
+          -e SPRING_DATASOURCE_URL="${{ secrets.SPRING_DATASOURCE_URL }}" \
+          -e SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
+          -e SPRING_DATASOURCE_PASSWORD='${{ secrets.SPRING_DATASOURCE_PASSWORD }}' \
+          -e MONGO_URI="${{ secrets.MONGO_URI }}" \
+          -e JAVA_OPTS="-Xms128m -Xmx256m" \
+          sunilya96/testing_docker_ec2:latest

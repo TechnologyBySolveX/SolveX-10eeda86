@@ -1,0 +1,493 @@
+All Commands Used In Docker 
+
+
+Steps for Installing Docker on Ubuntu
+Step 1: Update Software Repositories using the following command on the terminal.
+
+sudo apt update
+
+After that 
+Step 2: Install Docker using the following command
+
+sudo apt install docker.io -y
+
+So Aftrer that we have Step 3: Enable and start the docker service by using the following commands.
+
+sudo systemctl enable docker --now
+
+Step 4: Check Docker Version.
+
+docker --version
+
+
+Executing the Docker Command Without Sudo
+We will get a permission denied error as a regular user doesn't have permission to execute docker commands. Know we need to add the the user to the required group.
+
+Step 1: So we need to add an Ubuntu user to the docker group. 
+
+#sudo usermod -aG docker $USER
+    or
+#sudo usermod -aG docker ubuntu
+
+The following command helps in knowing whether current add user assigned to docker group or not:
+getent group docker
+
+
+Refresh the group permission to use updated one with running following command:
+newgrp docker
+
+Step 2: Restart the docker daemon which is already running. After restarting only the changes will comes into effect.
+
+sudo service docker restart
+
+Step 3: Leave the current SSH terminal and re-login with SSH. then carry out.
+
+docker ps
+
+$ docker run <image_name>
+To give name of container
+$ docker run --name <container_name> <image_name>
+
+List Docker images: "docker images" this command will list all the docker images which are available in the docker.
+To Pull Docker Images: "docker pull <Name of the image>" it will pull the required images which are stored in the docker hub registry or repository.
+
+
+
+below is the way to :
+
+
+
+deploying your Spring Boot WAR inside a Tomcat container is the most reliable way to run JSP pages. Here’s a clean Dockerfile you can use:
+
+
+
+And Dockerfile data is :
+
+
+
+# Use official Tomcat image with JDK
+FROM tomcat:9.0-jdk17
+
+
+
+# Remove default ROOT webapp to avoid conflicts
+RUN rm -rf /usr/local/tomcat/webapps/ROOT
+
+
+
+# Copy your WAR file into Tomcat's webapps directory
+
+
+COPY target/springboot-jsp-app.war /usr/local/tomcat/webapps/ROOT.war
+
+
+
+# Expose Tomcat default port
+EXPOSE 8080
+
+
+
+# Start Tomcat
+CMD ["catalina.sh", "run"]
+
+
+
+
+
+After this build the WAR file
+
+mvn clean package
+
+
+And Run It
+
+Build the Docker image:
+
+docker build -t springboot-jsp-tomcat .
+After that Run the container:
+
+docker run -p 8080:8080 springboot-jsp-tomcat
+
+
+All Commands for pulling docker image of mongoDB
+
+Pull the MongoDB Image
+docker pull mongo:6.0
+
+Run MongoDB Container
+docker run -d \
+  --name mongodb \
+  -p 27017:27017 \
+  -v ~/mongo_data:/data/db \
+  mongo:6.0
+
+Verify It’s Running
+docker ps
+
+You should see mongodb container up and listening on port 27017.
+
+Connect From Your Spring Boot App
+spring.data.mongodb.uri=mongodb://localhost:27017/testdb
+
+
+now test the connections from EC2 instance okay 
+
+docker exec -it mongodb mongosh
+This opens the MongoDB shell inside the container. Try:
+show dbs
+
+Key Notes
+If Spring Boot runs outside Docker on EC2 → use localhost:27017.
+
+If Spring Boot runs inside Docker → use mongodb:27017 and put both containers in the same network:docker network create mynet
+docker run -d --name mongodb --network=mynet -p 27017:27017 mongo:6.0
+docker run -d --name springapp --network=mynet -p 8080:8080 your-spring-boot-app:latest
+
+Then set:
+properties
+spring.data.mongodb.uri=mongodb://mongodb:27017/testdb
+
+
+I am running the both App And MongoDB on Same Network okay so below is the commands for it : 
+Step by Step Setup
+1. Create a Docker Network (if not already)
+docker network create mynet
+
+(If you already have a network, you can skip this.)
+
+for Databse user Authneticaytions 
+
+docker run -d \
+  --name my-mongo \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=secret \
+  --network mynetwork \
+  -p 27017:27017 \
+  -v ~/mongo_data:/data/db \
+  mongo:latest
+  
+  
+ docker run -d \
+--network mynetwork \
+  --name mymongo \
+  -p 27017:27017 \
+   -v mongo_data:/data/db \
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=Admin@123 \
+  mongo
+  
+docker run -d \
+--network mynetwork \
+  --name mymongo \
+  -p 27017:27017 \
+   -v mongo_data:/data/db \
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=Admin@123 \
+  mongo
+ 
+docker exec -it mymongo mongosh -u admin -p Admin@123 --authenticationDatabase admin
+
+ 
+this is working as excepted
+  
+  docker pull mongodb/mongodb-community-server:latest
+ 
+docker run --name mongodb -p 27017:27017 -d mongodb/mongodb-community-server:latest
+
+Run MongoDB in That Network
+docker run -d \
+  --name mongodb \
+  --network mynetwork \
+  -p 27017:27017 \
+  -v ~/mongo_data:/data/db \
+  mongo:6.0
+  
+ 
+for checking MongoDb Database for userName ANd password : 
+docker exec -it mongo mongosh -u admin -p secret --authenticationDatabase admin
+docker exec -it mongo:6.0 mongosh -u admin -p secret --authenticationDatabase admin
+
+--network mynet → attaches MongoDB to your custom network
+
+-p 27017:27017 → optional, exposes MongoDB to EC2 host (needed if you want to connect externally)
+
+-v ~/mongo_data:/data/db → persists data on EC2
+
+Run Your Spring Boot App in Same Network
+docker run -d \
+  --name springapp \
+  --network mynet \
+  -p 8080:8080 \
+  your-spring-boot-app:latest
+
+Configure Spring Boot to Use Container Name
+In application.properties (or application.yml):
+spring.data.mongodb.uri=mongodb://mongodb:27017/testdb
+
+Use mongodb (the container name) instead of localhost.
+
+Replace testdb with your actual database name.
+
+5. Verify Connection
+Check logs of your Spring Boot container:
+
+docker logs springapp
+
+All IP for our EC2 Instances : 
+
+for Our Spring App : 18.61.100.204
+for Our MYSQL  APP : 18.61.39.199
+for Our Docker APP : 40.192.85.98 And Working url for our App : http://40.192.85.98:8081/employees?
+
+spring.datasource.url=jdbc:mysql://18.61.39.199:3306/testingDB?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&connectTimeout=10000&socketTimeout=15000
+spring.datasource.username=codeuser
+spring.datasource.password=Tech$7318
+
+for Running our tomcat Spring App : 
+docker run -d -p 8081:8080 --name springboot-container springboot-jsp-tomcat
+
+http://18.61.100.204:8081/employees
+
+
+***********************************************************************************************
+
+docker run -d \
+--network mynetwork \
+  --name mymongo \
+  -p 27017:27017 \
+   -v mongo_data:/data/db \
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=Admin@123 \
+  mongo
+ 
+docker exec -it mymongo mongosh -u admin -p Admin@123 --authenticationDatabase admin
+
+ 
+this is working as excepted
+
+docker exec -it mymongo mongosh -u admin -p Admin@123 --authenticationDatabase admin
+
+docker run -d \
+
+--network mynetwork \
+
+  --name mymongo \
+
+  -p 27017:27017 \
+
+   -v mongo_data:/data/db \
+
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+
+  -e MONGO_INITDB_ROOT_PASSWORD=Admin@123 \
+
+  mongo
+
+ 
+docker run -p 8081:8080 --name Springboot-app --network mynetwork --link mymongo:mongo -d springboot-jsp-tomcat:latest
+ 
+docker image prune -f  -> this command  will remove al none images in single short
+ 
+docker exec -it mymongo mongosh -u admin -p Admin@123 --authenticationDatabase admin
+
+ 
+
+
+docker build -t springboot-jsp-tomcat .
+ 
+docker run -d \
+  --name springboot-app \
+  --network mynetwork \
+  -p 8081:8080 \
+  springboot-jsp-tomcat
+
+
+
++++++++++++++++++ how to connect our MongoDb database with our Spring Appplications +++++++
+
+To connect your Spring Boot application with a MongoDB instance running inside a Docker \
+Run MongoDB in Docker
+Start MongoDB using the official image:
+
+docker run -d \
+  --name my-mongo \
+  -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=root \
+  -e MONGO_INITDB_ROOT_PASSWORD=example \
+  mongo:latest
+
+
+-p 27017:27017 → exposes MongoDB on your local machine’s port 27017.
+
+MONGO_INITDB_ROOT_USERNAME and MONGO_INITDB_ROOT_PASSWORD → credentials for authentication.
+
+Configure application.properties (or application.yml)
+Tell Spring Boot how to connect to MongoDB:
+
+spring.data.mongodb.uri=mongodb://root:example@localhost:27017/mydatabase
+
+
+
+And if you are using or created own network okay then below is the commands used fo this 
+
+Create the Network
+You already did this, but for completeness:
+docker network create mynetwork
+
+
+Run MongoDB on That Network
+Attach MongoDB to mynetwork:
+
+docker run -d \
+  --name my-mongo \
+  --network mynetwork \
+  -e MONGO_INITDB_ROOT_USERNAME=root \
+  -e MONGO_INITDB_ROOT_PASSWORD=example \
+  mongo:latest
+
+Notice: no -p 27017:27017 is required if you only want containers inside the network to talk to MongoDB. If you also want to connect from your host machine (e.g., MongoDB Compass), keep the -p.
+
+Run Your Spring Boot App on the Same Network
+If you package your Spring Boot app as a Docker image:
+
+docker build -t my-spring-app .
+
+docker run -d \
+  --name spring-app \
+  --network mynetwork \
+  -e SPRING_DATA_MONGODB_URI=mongodb://root:example@my-mongo:27017/mydatabase \
+  my-spring-app
+
+Key Point: Use the Container Name as Host
+Inside mynetwork, containers can resolve each other by name.
+So in your Spring Boot config (application.properties or environment variable):
+
+in that .properties file you can mentioned like 
+spring.data.mongodb.uri=mongodb://root:example@my-mongo:27017/mydatabase
+
+my-mongo is the container name of MongoDB.
+
+No need to use localhost because from Spring Boot’s perspective, MongoDB is another container on the same network.
+
+Verify Connectivity
+You can test by entering the Spring Boot container and pinging MongoDB:
+
+docker exec -it spring-app ping my-mongo
+
+Or connect with the Mongo shell:
+
+docker exec -it my-mongo mongosh -u root -p example
+
+
+
+++++++++++++++++++++++++  Can you give one Example like how to communicate three container using docker Suppose one container is for our App  And Second one is for our mysql And third is one is for our MongoDB Database ?
+  +++++++++++++++++++
+
+
+Got it — no Docker Compose for now. Let’s do this step by step with plain docker run commands and a shared network. You’ll have three containers:
+
+Spring Boot app
+MySQL
+MongoDB
+
+Create a Network
+docker network create mynetwork
+
+
+Second step is that like Run MySQL on That Network
+
+docker run -d \
+  --name mysql-db \
+  --network mynetwork \
+  -e MYSQL_ROOT_PASSWORD=rootpass \
+  -e MYSQL_DATABASE=mymysqldb \
+  -e MYSQL_USER=appuser \
+  -e MYSQL_PASSWORD=apppass \
+  -p 3306:3306 \
+  mysql:8.0
+
+Aftrer that we have to Run MongoDB on That Network 
+
+docker run -d \
+  --name mongo-db \
+  --network mynetwork \
+  -e MONGO_INITDB_ROOT_USERNAME=root \
+  -e MONGO_INITDB_ROOT_PASSWORD=example \
+  -p 27017:27017 \
+  mongo:latest
+
+After that we have to Run Your Spring Boot App on That Network
+First, build your app image using docker file :
+
+docker build -t spring-app .
+
+After build is done now we have to run the container okay 
+
+Then run it:
+docker run -d \
+  --name spring-app \
+  --network mynetwork \
+  -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/mymysqldb \
+  -e SPRING_DATASOURCE_USERNAME=appuser \
+  -e SPRING_DATASOURCE_PASSWORD=apppass \
+  -e SPRING_DATA_MONGODB_URI=mongodb://root:example@mongo-db:27017/mydatabase \
+  -p 8080:8080 \
+  spring-app
+
+And for .properties file we have to do some of the configurations okay 
+Key Configurations in Spring Boot
+MySQL (JPA/Hibernate):
+spring.datasource.url=jdbc:mysql://mysql-db:3306/mymysqldb
+spring.datasource.username=appuser
+spring.datasource.password=apppass
+spring.jpa.hibernate.ddl-auto=update
+
+And for mongoDb we have to add some of the configuratiosn file 
+
+MongoDB (Spring Data MongoDB):
+spring.data.mongodb.uri=mongodb://root:example@mongo-db:27017/mydatabase
+
+Notice:
+
+Use container names (mysql-db, mongo-db) instead of localhost.
+
+All three containers are on mynetwork, so they can resolve each other by name.
+
+So for verifications we have to 
+
+Verify
+From inside the Spring Boot container:
+docker exec -it spring-app ping mysql-db
+docker exec -it spring-app ping mongo-db
+
+
+
+Both should respond, confirming connectivity.
+
+
+Now your Spring Boot app can talk to both MySQL and MongoDB without Docker Compose, just using docker run and a shared network.
+
+
+ 
+
+
+++++++++++++++basic Command used for our App ++++++
+
+docker build -t spring-app .
+docker run -d \
+--network mynetwork \
+  --name mymongo \
+  -p 27017:27017 \
+   -v mongo_data:/data/db \
+-e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=Admin@123 \
+  mongo
+  
+docker run -p 8081:8080 --name Springboot-app --network mynetwork --link mymongo:mongo -d springboot-jsp-tomcat:latest
+
+
+docker exec -it mymongo mongosh -u admin -p Admin@123 --authenticationDatabase admin
+
+docker run -p 8081:8080 --name Springboot-app --network mynetwork --link mymongo:mongo -d my-spring-app:latest
+ 
+ 

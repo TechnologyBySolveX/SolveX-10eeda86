@@ -1,0 +1,913 @@
+Error While I am getting for this project is : 
+
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Mon Dec 29 11:05:29 IST 2025
+There was an unexpected error (type=Method Not Allowed, status=405).
+Method 'POST' is not supported.
+org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'POST' is not supported
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.handleNoMatch(RequestMappingInfoHandlerMapping.java:260)
+	at org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.lookupHandlerMethod(AbstractHandlerMethodMapping.java:434)
+	at org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.getHandlerInternal(AbstractHandlerMethodMapping.java:376)
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.getHandlerInternal(RequestMappingInfoHandlerMapping.java:116)
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.getHandlerInternal(RequestMappingInfoHandlerMapping.java:68)
+	at org.springframework.web.servlet.handler.AbstractHandlerMapping.getHandler(AbstractHandlerMapping.java:543)
+	at org.springframework.web.servlet.DispatcherServlet.getHandler(DispatcherServlet.java:1157)
+	
+	
+	
+And Second Error : 
+
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Mon Dec 29 11:16:55 IST 2025
+There was an unexpected error (type=Method Not Allowed, status=405).
+Method 'GET' is not supported.
+org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.handleNoMatch(RequestMappingInfoHandlerMapping.java:260)
+	at org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.lookupHandlerMethod(AbstractHandlerMethodMapping.java:434)
+	at org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.getHandlerInternal(AbstractHandlerMethodMapping.java:376)
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.getHandlerInternal(RequestMappingInfoHandlerMapping.java:116)
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.getHandlerInternal(RequestMappingInfoHandlerMapping.java:68)
+	at org.springframework.web.servlet.handler.AbstractHandlerMapping.getHandler(AbstractHandlerMapping.java:543)	
+
+
+
+And third Error is : 
+
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Mon Dec 29 11:32:33 IST 2025
+There was an unexpected error (type=Method Not Allowed, status=405).
+Method 'GET' is not supported.
+org.springframework.web.HttpRequestMethodNotSupportedException: Request method 'GET' is not supported
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.handleNoMatch(RequestMappingInfoHandlerMapping.java:260)
+	at org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.lookupHandlerMethod(AbstractHandlerMethodMapping.java:434)
+	at org.springframework.web.servlet.handler.AbstractHandlerMethodMapping.getHandlerInternal(AbstractHandlerMethodMapping.java:376)
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.getHandlerInternal(RequestMappingInfoHandlerMapping.java:116)
+	at org.springframework.web.servlet.mvc.method.RequestMappingInfoHandlerMapping.getHandlerInternal(RequestMappingInfoHandlerMapping.java:68)
+	at org.springframework.web.servlet.handler.AbstractHandlerMapping.getHandler(AbstractHandlerMapping.java:543)	
+	
+	
+And Fourth Error is : 
+
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Mon Dec 29 22:59:37 IST 2025
+There was an unexpected error (type=Internal Server Error, status=500).
+Query did not return a unique result: 2 results were returned
+org.springframework.dao.IncorrectResultSizeDataAccessException: Query did not return a unique result: 2 results were returned
+	at org.springframework.orm.jpa.hibernate.HibernateExceptionTranslator.convertHibernateAccessException(HibernateExceptionTranslator.java:180)
+	at org.springframework.orm.jpa.hibernate.HibernateExceptionTranslator.convertHibernateAccessException(HibernateExceptionTranslator.java:131)
+	at org.springframework.orm.jpa.hibernate.HibernateExceptionTranslator.translateExceptionIfPossible(HibernateExceptionTranslator.java:109)
+	at org.springframework.orm.jpa.vendor.HibernateJpaDialect.translateExceptionIfPossible(HibernateJpaDialect.java:199)
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.translateExceptionIfPossible(AbstractEntityManagerFactoryBean.java:556)
+	at org.springframework.dao.support.ChainedPersistenceExceptionTranslator.translateExceptionIfPossible(ChainedPersistenceExceptionTranslator.java:61)
+	at org.springframework.dao.support.DataAccessUtils.translateIfNecessary(DataAccessUtils.java:346)
+	at org.springframework.dao.support.PersistenceExceptionTranslationInterceptor.invoke(PersistenceExceptionTranslationInterceptor.java:157)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:179)
+	
+	
+for Fourth Error : 
+
+SELECT email, COUNT(*) 
+FROM users 
+GROUP BY email 
+HAVING COUNT(*) > 1;
+
+
+-- Example: keep one, delete others
+DELETE FROM users
+WHERE id NOT IN (SELECT MIN(id) FROM users GROUP BY email);
+
+
+SELECT user_id, COUNT(*) 
+FROM verification_tokens 
+GROUP BY user_id 
+HAVING COUNT(*) > 1;
+
+
+DELETE FROM verification_tokens
+WHERE id NOT IN (
+    SELECT MAX(id) FROM verification_tokens GROUP BY user_id
+);
+
+Ensure Unique Constraints in DB
+
+ALTER TABLE users ADD CONSTRAINT uc_email UNIQUE(email);
+
+ALTER TABLE verification_tokens 
+ADD CONSTRAINT uc_user_token UNIQUE(user_id);
+
+	
+	
+	
+UserN ame : infinitehealthsure@gmail.com
+Password is : xrascqydsfthxttk
+
+
+Database Schema : 
+
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(255),
+    enabled BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE otp_details (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(100),
+    otp VARCHAR(6),
+    expiry_time TIMESTAMP,
+    verified BOOLEAN DEFAULT FALSE
+);
+
+
+New features After user Sign Up is Completed :
+
+1 : Email Verification – Complete Implementation
+
+User signs up
+User is saved as DISABLED / NOT VERIFIED
+System generates a verification token
+Email is sent with a verification link
+User clicks link
+
+New Tables for Above new Features Implementation
+verification_tokens Table (New)
+
+CREATE TABLE verification_tokens (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    token VARCHAR(255) NOT NULL UNIQUE,
+
+    user_id BIGINT NOT NULL,
+
+    expiry_time TIMESTAMP NOT NULL,
+
+    CONSTRAINT fk_verification_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+);
+
+ALTER TABLE users
+ADD COLUMN enabled BOOLEAN DEFAULT FALSE;
+
+
+
+Account Security Features
+Feature	Description / Benefit
+Account Lockout on Failed Attempts	Lock user after 3-5 failed login attempts. Prevents brute-force attacks.
+Two-Factor Authentication (2FA)	Add extra OTP sent via email or SMS during login.
+Session Management	Limit concurrent sessions, auto-logout inactive sessions.
+Password Strength Validation	Force users to use strong passwords.
+
+
+2️ : User Experience / Convenience Features
+Feature	Description
+Remember Me / Stay Logged In	Keep user logged in via cookie for X days.
+Resend Verification Email / Token Expiry Notification	Already partially done; can automate reminders.
+Profile Management	Users can update name, password, email.
+Email Change Verification	Verify any email change with new token.
+
+
+New Features :  Add failed login attempt tracking and account lock
+
+Database Changes
+
+You need to update your users table to include:
+failed_attempts → number of consecutive failed login attempts
+account_locked → whether the account is locked
+lock_time → when the account was locked (optional, for auto-unlock)
+
+
+
+
+Next Step : 
+
+LDAP Server for Passowrd Storage 
+
+Problem Feed / Dashboard
+
+Show:
+
+Total problems count
+Solved problems
+Attempted problems
+Acceptance rate
+
+
+2. Problem List
+
+Show:
+Problem title
+Difficulty (Easy / Medium / Hard)
+Tags (Array, DP, String)
+Status (Solved / Attempted / Not Tried)
+
+3. Problem Solving Page
+
+When user clicks a problem:
+Problem description
+Input / Output examples
+Constraints
+Code editor (language selection)
+
+4. Code Submission
+Allow users to:
+Write code
+Submit solution
+See result (Accepted / Wrong Answer / TLE)
+
+Engagement Features (Keeps Users Coming Back)
+ 5. Daily Challenge
+One problem per day
+Badge or streak count
+
+6. Progress Tracking
+Show:
+Problems solved by difficulty
+Weekly / monthly progress graph
+
+7. Favorite / Bookmark Problems
+Save problems for later
+Personalized practice list
+
+8 Leaderboard
+Rank users by:
+Problems solved
+Points
+Streaks
+
+9. Contests
+Timed contests
+Rank after contest ends
+Learning-Focused Features
+
+
+10. Solution Explanations
+Official solution
+User-submitted solutions
+Time & space complexity
+
+11. Discussion Forum
+Comment under each problem
+Ask doubts
+Share approaches
+
+14. Skill Tree / Roadmaps
+Arrays → Strings → DP → Graphs
+Unlock levels after solving X problems
+
+
+Recommended Feature Implementation Order
+Phase 1 (Now – Beginner)
+
+Problem list
+
+Problem details page
+
+Code submission (mock or basic judge)
+
+Track solved / attempted problems
+
+Phase 2 (Intermediate)
+
+User progress dashboard
+
+Daily challenge
+
+Favorites / bookmarks
+
+Leaderboard
+
+Phase 3 (Advanced)
+
+Contest system
+
+Discussion forum
+
+Real code judge (Docker)
+
+Recommendations
+
+
+New Features of The Home Page Started here 
+
+problems Table
+
+Stores all coding problems.
+CREATE TABLE problems (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) UNIQUE NOT NULL,
+    description TEXT NOT NULL,
+    difficulty ENUM('EASY','MEDIUM','HARD') NOT NULL,
+    constraints TEXT,
+    example_input TEXT,
+    example_output TEXT,
+    acceptance_rate DECIMAL(5,2) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+tags Table (Problem Categories)
+CREATE TABLE tags (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) UNIQUE NOT NULL
+);
+
+problem_tags (Many-to-Many)
+CREATE TABLE problem_tags (
+    problem_id BIGINT,
+    tag_id BIGINT,
+    PRIMARY KEY (problem_id, tag_id),
+    FOREIGN KEY (problem_id) REFERENCES problems(id),
+    FOREIGN KEY (tag_id) REFERENCES tags(id)
+);
+
+submissions Table
+CREATE TABLE submissions (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    problem_id BIGINT NOT NULL,
+    code TEXT NOT NULL,
+    language VARCHAR(50),
+    status ENUM('ACCEPTED','WRONG_ANSWER','TLE','RUNTIME_ERROR') NOT NULL,
+    execution_time INT,
+    memory_used INT,
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (problem_id) REFERENCES problems(id)
+);
+
+
+user_problem_status (Fast Dashboard Stats)
+Tracks latest status per problem per user.
+
+CREATE TABLE user_problem_status (
+    user_id BIGINT,
+    problem_id BIGINT,
+    status ENUM('SOLVED','ATTEMPTED','NOT_TRIED'),
+    last_submission TIMESTAMP,
+
+    PRIMARY KEY (user_id, problem_id),
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (problem_id) REFERENCES problems(id)
+);
+
+
+
+
+package com.example.UserAuthentocation;
+
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+
+public class ServletInitializer extends SpringBootServletInitializer {
+
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(UserAuthentocationApplication.class);
+	}
+
+}
+
+
+====== New Application.properties file ++++++++++++++
+
+spring.application.name=UserAuthentocation
+
+spring.datasource.url=jdbc:mysql://98.130.47.120:3306/codeBloomDatabaseDEVToPRD
+spring.datasource.username=root
+spring.datasource.password=Sunya@7989
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+server.port=8081
+
+# JSP
+spring.jpa.generate-ddl=true
+spring.mvc.view.prefix=/WEB-INF/views/
+spring.mvc.view.suffix=.jsp
+
+# Email (Gmail example)
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=
+spring.mail.password=
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+
+
+
+
+
++++++++++++++++++++ User Email verification implementations in In progress ++++++++++++++++++
+
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    email_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE email_verification_token (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL,
+    token VARCHAR(255) UNIQUE NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+ 
+ <dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>java-dotenv</artifactId>
+			<version>5.2.2</version>
+		</dependency>
+
+
+
+
+How to Deploy the WAR File on EC2 instance Step by Step processs :
+
+
+
+INAL, WORKING SOLUTION
+Spring Boot (WAR) + External Tomcat on EC2
+
+This is how JSP apps are deployed in real production.
+
+🟢 STEP 1: Prepare Your Spring Boot Project (LOCALLY)
+1️⃣ Change packaging to WAR
+
+pom.xml
+
+<packaging>war</packaging>
+
+2️⃣ Add JSP dependencies
+<dependency>
+    <groupId>org.apache.tomcat.embed</groupId>
+    <artifactId>tomcat-embed-jasper</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>jakarta.servlet.jsp.jstl</groupId>
+    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+</dependency>
+
+<dependency>
+    <groupId>org.glassfish.web</groupId>
+    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+</dependency>
+
+3️⃣ Extend SpringBootServletInitializer
+@SpringBootApplication
+public class UserAuthentocationApplication
+        extends SpringBootServletInitializer {
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(UserAuthentocationApplication.class);
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(UserAuthentocationApplication.class, args);
+    }
+}
+
+4️⃣ Correct JSP location (VERY IMPORTANT)
+src/main/webapp/WEB-INF/jsp/
+    └── login.jsp
+
+
+❌ Do NOT put JSP in resources/templates
+
+5️⃣ application.properties
+spring.mvc.view.prefix=/WEB-INF/jsp/
+spring.mvc.view.suffix=.jsp
+
+6️⃣ Build WAR
+mvn clean package
+
+
+Output:
+
+target/UserAuthentocation.war
+
+🟢 STEP 2: Setup EC2 (Amazon Linux / Ubuntu)
+1️⃣ SSH into EC2
+ssh -i your-key.pem ec2-user@EC2_PUBLIC_IP
+
+2️⃣ Install Java (17 recommended)
+sudo yum install java-17-amazon-corretto -y
+java -version
+
+3️⃣ Install Tomcat
+sudo yum install tomcat -y
+
+
+Start Tomcat:
+
+sudo systemctl start tomcat
+sudo systemctl enable tomcat
+
+
+Check:
+
+sudo systemctl status tomcat
+
+4️⃣ Open Port 8080 (EC2 Security Group)
+
+Inbound Rule:
+
+Type	Port	Source
+Custom TCP	8080	0.0.0.0/0
+🟢 STEP 3: Deploy WAR to Tomcat
+1️⃣ Copy WAR to EC2
+
+From local machine:
+
+scp -i your-key.pem target/UserAuthentocation.war ec2-user@EC2_PUBLIC_IP:/home/ec2-user/
+
+2️⃣ Move WAR to Tomcat webapps
+sudo mv UserAuthentocation.war /usr/share/tomcat/webapps/
+
+
+Restart Tomcat:
+
+sudo systemctl restart tomcat
+
+🟢 STEP 4: Access Your JSP Application
+
+Open browser:
+
+http://EC2_PUBLIC_IP:8080/UserAuthentocation/
+
+
+OR if controller mapping:
+
+@GetMapping("/")
+
+
+Then:
+
+http://EC2_PUBLIC_IP:8080/UserAuthentocation/
+
+🟢 STEP 5: Verify JSP Compilation (DEBUG)
+
+Check logs:
+
+sudo tail -f /var/log/tomcat/catalina.out
+
+
+You should see:
+
+Deploying web application archive UserAuthentocation.war
+
+
+If JSP fails, errors appear here.
+
+🔥 COMMON EC2 MISTAKES (CHECK)
+Issue	Fix
+JAR used	Must use WAR
+JSP inside resources	Must be webapp/WEB-INF
+DevTools enabled	Remove in prod
+Port not open	Open 8080 SG
+Using root DB	Use app user
+🚀 OPTIONAL (BEST PRACTICE)
+
+Use Nginx in front of Tomcat
+
+Enable HTTPS
+
+Run Tomcat behind domain
+
+Use systemd service
+
+✅ FINAL ANSWER
+
+JSP WILL NOT WORK RELIABLY WITH JAR ON EC2
+
+✔ WAR + External Tomcat = 100% working
+
+✔ This is how real production apps run
+
+
+Login With Google tables Updated 
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255),
+
+    provider VARCHAR(50),            -- GOOGLE, LOCAL
+    provider_user_id VARCHAR(255),   -- Google "sub"
+
+    email_verified BOOLEAN DEFAULT FALSE,
+    enabled BOOLEAN DEFAULT TRUE,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+How to make More Secure Login With google And User Specifc used email id 
+
+First Time User Will login Using their own Credentials After login using correct Credential Okay it will navigate to our page where we will again
+ask user to entered their recent used while login to login after more security I will send one OTP to that particular emailId okay So We can say that 
+valid user is trying to login with Google to vist our Websites
+
+
+If you want, I can make a ready-to-run GitHub-style bundle with:
+
+JSP pages
+
+Spring Boot backend
+
+Self-hosted Monaco
+
+Multi-language runner
+
+DSA snippets
+
+Input/output box
+
+Submission history & leaderboard
+
+…so you can literally run it locally or deploy like a real HackerRank clone.
+
+
+local host of mongoDB is : mongodb://localhost:27017
+
+
+I have staretd working on new features of Code Submission for Problems Submit by users 
+
+CREATE TABLE Submission (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,       -- unique submission ID
+    user_id VARCHAR(50) NOT NULL,               -- FK to User table (MySQL)
+    problem_id VARCHAR(50) NOT NULL,            -- FK to Problem collection (MongoDB ID stored as string)
+    code TEXT NOT NULL,                         -- the actual source code submitted
+    language VARCHAR(20) NOT NULL,              -- e.g. 'java', 'python', 'cpp'
+    status VARCHAR(20) NOT NULL,                -- e.g. 'Accepted', 'Wrong Answer', 'Runtime Error', 'TLE'
+    runtime_ms INT,                             -- execution time in milliseconds
+    memory_kb INT,                              -- memory usage in KB
+    time_taken_sec INT,                         -- how long user took to solve (from timer)
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+db.problems.insertMany([
+  {
+    "title": "Two Sum",
+    "description": "Find two numbers in an array that add up to a target value.",
+    "difficulty": "Easy",
+    "popularity": 95,
+    "tags": ["arrays", "hashmap", "math"],
+    "examples": [
+      { "input": "[2,7,11,15], target=9", "output": "[0,1]" },
+      { "input": "[3,2,4], target=6", "output": "[1,2]" }
+    ],
+    "solved": true,
+    "favorite": true,
+    "dateAdded": ISODate("2026-01-16T13:37:00Z"),
+    "supportedLanguages": ["java", "python", "cpp"]
+  },
+  {
+    "title": "Longest Substring Without Repeating Characters",
+    "description": "Given a string, find the length of the longest substring without repeating characters.",
+    "difficulty": "Medium",
+    "popularity": 88,
+    "tags": ["strings", "sliding-window"],
+    "examples": [
+      { "input": "\"abcabcbb\"", "output": "3" },
+      { "input": "\"bbbbb\"", "output": "1" }
+    ],
+    "solved": false,
+    "favorite": false,
+    "dateAdded": ISODate("2026-01-15T10:00:00Z"),
+    "supportedLanguages": ["java", "python", "javascript"]
+  },
+  {
+    "title": "Median of Two Sorted Arrays",
+    "description": "Find the median of two sorted arrays of different sizes.",
+    "difficulty": "Hard",
+    "popularity": 70,
+    "tags": ["arrays", "binary-search", "divide-and-conquer"],
+    "examples": [
+      { "input": "[1,3], [2]", "output": "2.0" },
+      { "input": "[1,2], [3,4]", "output": "2.5" }
+    ],
+    "solved": false,
+    "favorite": true,
+    "dateAdded": ISODate("2026-01-14T09:30:00Z"),
+    "supportedLanguages": ["java", "python", "cpp", "go"]
+  },
+  {
+    "title": "Reverse String", 
+    "description": "Write a function that reverses a string.",
+    "difficulty": "Easy",
+    "popularity": 99,
+    "tags": ["strings", "recursion"],
+    "examples": [
+      { "input": "\"hello\"", "output": "\"olleh\"" },
+      { "input": "\"world\"", "output": "\"dlrow\"" }
+    ],
+    "solved": true,
+    "favorite": false,
+    "dateAdded": ISODate("2026-01-12T15:45:00Z"),
+    "supportedLanguages": ["java", "python", "cpp", "ruby"]
+  }
+]);
+
+Database table for Content Creations :
+CREATE TABLE java_tutorials (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  category VARCHAR(50) NOT NULL,   -- Basics, OOP, Advanced
+  content LONGTEXT NOT NULL,       -- full tutorial text
+  order_no INT NOT NULL,           -- sequence in roadmap
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+testing Project With JSP pages Are And their Dependency Are :
+
+Below is the Dependency for TestingProjectWithJSPPages:
+
+		<!-- Add Tomcat JSP support -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.servlet.jsp.jstl</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- JSP Support -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+		<!-- JSTL (Jakarta Standard Tag Library) -->
+		<dependency>
+			<groupId>jakarta.servlet.jsp.jstl</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.web</groupId>
+			<artifactId>jakarta.servlet.jsp.jstl</artifactId>
+			<version>3.0.1</version>
+		</dependency>
+
+		<!--		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+
+And for Our old projects :
+
+Dependency Are : 
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- JSP Support -->
+		<dependency>
+			<groupId>org.apache.tomcat.embed</groupId>
+			<artifactId>tomcat-embed-jasper</artifactId>
+		</dependency>
+
+		<!-- JSTL -->
+		<!--<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+		</dependency>-->
+		<!-- Email -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+
+		<!-- Password Encoder -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-crypto</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+				<!-- Spring Security with google login ke liye -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- OAuth2 Client (Google Login) -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-client</artifactId>
+		</dependency>
+ 	
+ 		 <!-- Spring Data MongoDB -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
+        
+        <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>1.2</version>
+    </dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>

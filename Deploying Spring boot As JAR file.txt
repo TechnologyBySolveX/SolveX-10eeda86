@@ -1,0 +1,44 @@
+Deploying the Spring Boot Application As JAR file 
+
+
+Since you’re deploying on AWS Ubuntu, you’ll need to install Docker first (
+sudo apt-get update && 
+sudo apt-get install docker.io
+).
+
+Build the JAR File
+1. Check Your Build Tool
+Spring Boot projects are usually built with Maven or Gradle.
+
+If you see a pom.xml → Maven
+
+If you see a build.gradle → Gradle
+
+AFter that 
+
+For Maven
+Run this in your project root:
+mvn clean package
+
+This will compile your code, run tests, and package the app.
+
+The JAR file will be created in target/ (e.g., target/your-app.jar).
+
+Verify the JAR
+Run it locally to confirm:
+java -jar target/your-app.jar
+
+So Next Step: Dockerize the JAR
+Once you have the JAR, your Dockerfile should look like this:
+
+FROM openjdk:17-jdk-alpine
+WORKDIR /app
+COPY target/your-app.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+
+Then build and run:
+
+docker build -t springboot-jsp-app .
+docker run -d -p 8080:8080 springboot-jsp-app
+

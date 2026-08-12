@@ -1,0 +1,20 @@
+Oracle Account And Setup 
+
+
+Is Oracle Cloud Free?
+Yes, Oracle offers a Free Tier account.
+
+Always Free Services: Autonomous Database, Compute VMs, Block Storage, Object Storage, Monitoring, and more.
+
+Free Trial Credits: $300 worth of credits valid for 30 days to explore paid services.
+
+After 30 days, if you don’t upgrade, you still keep the Always Free resources.
+
+
+omparison: Free vs Paid Oracle Cloud
+Feature	Free Tier (Always Free)	        Paid Account
+Autonomous Database	2 DBs, 20 GB each	Unlimited, scalable
+Compute VMs	2 VMs, 1 OCPU,    1 GB RAM	Larger VMs, GPU, HPC
+Storage	10 GB block, 10 GB object	Scalable TBs/PBs
+Credits	$300 for 30 days	Pay‑as‑you‑go
+Cost	Free	Based on usage
