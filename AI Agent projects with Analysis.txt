@@ -1,0 +1,162 @@
+AI Agent projects with below requiremnets and real time projects with various analysis
+
+Resume Description
+
+AI Software Troubleshooting Agent | LangGraph, Groq, Streamlit, GitPython
+
+Developed an Agentic AI troubleshooting platform using LangGraph and Groq Llama 3.3 that autonomously investigates software defects by analyzing Git commits, frontend code, backend services, logs, and configuration changes. Implemented multi-agent workflows for root-cause analysis, impact assessment, rollback recommendations, and automated troubleshooting reports through an interactive Streamlit interface.
+
+
+This is actually a very strong Agentic AI project because it demonstrates:
+
+Multi-Agent Systems
+LangGraph
+Groq LLM
+Software Engineering
+Root Cause Analysis
+Git Intelligence
+Streamlit
+DevOps Automation
+
+
+Real Project Implementation
+Project Name
+
+AI Software Troubleshooting Agent
+
+Tech Stack
+
+Frontend:
+    Streamlit
+
+AI:
+    Groq Llama 3.3
+    LangGraph
+
+Tools:
+    GitPython
+    Python AST
+    File Search
+
+Optional:
+    ChromaDB
+    LangChain
+	
+	
+	
+
+
+Best Resume-Worthy Version
+
+Combine these:
+
+✅ Git Analysis Agent
+ ✅ Frontend Analysis Agent
+ ✅ Backend Analysis Agent
+ ✅ Log Analysis Agent
+ ✅ Security Agent
+ ✅ Jira Agent
+ ✅ RAG Knowledge Base
+ ✅ Root Cause Generator
+ ✅ Auto Fix Generator
+ ✅ Streamlit Dashboard
+ ✅ LangGraph Multi-Agent Workflow
+ ✅ Groq Llama 3.3
+
+Resume Title
+
+AI-Powered Software Troubleshooting and Root Cause Analysis Platform using LangGraph, Groq LLM, RAG, Git Intelligence, and Multi-Agent Systems
+
+This would look significantly stronger than a standard chatbot project because it demonstrates Agentic AI, LangGraph, RAG, DevOps, Software Engineering, Security, and Enterprise Automation in one solution.
+
+
+
+----------------------------- Project implementation is started from here -----------------------------------------------------
+
+ai-troubleshooter/
+
+├── app.py
+│
+├── agents/
+│   ├── git_agent.py
+│   ├── code_agent.py
+│   ├── log_agent.py
+│   ├── security_agent.py
+│   └── rca_agent.py
+│
+├── graph/
+│   └── workflow.py
+│
+├── services/
+│   ├── groq_service.py
+│   └── git_service.py
+│
+├── reports/
+│
+├── logs/
+│
+├── repository/
+│
+├── .env
+└── requirements.txt
+
+
+
+                    User Query
+                         |
+                         v
+               LangGraph Supervisor
+                         |
+      ---------------------------------------
+      |         |        |       |         |
+      v         v        v       v         v
+   Git      Security    Log    Test     RAG
+  Agent      Agent     Agent   Agent   Agent
+      \         |        |       |      /
+       \        |        |       |     /
+        --------------------------------
+                         |
+                         v
+                Root Cause Agent
+                         |
+                         v
+                    Groq LLM
+                         |
+                         v
+                  Final Report
+				  
+				  
+
+Folder Strcuture : 
+
+troubleshooting-agent/
+
+├── app.py
+├── config.py
+├── .env
+│
+├── agents/
+│   ├── git_agent.py
+│   ├── security_agent.py
+│   ├── log_agent.py
+│   ├── test_agent.py
+│   ├── rag_agent.py
+│   ├── rca_agent.py
+│
+├── graph/
+│   ├── state.py
+│   └── workflow.py
+│
+├── services/
+│   ├── groq_service.py
+│   ├── github_service.py
+│   ├── jira_service.py
+│   └── confluence_service.py
+│
+├── vectordb/
+│   └── chroma_db
+│
+├── repository/
+├── logs/
+└── docs/
+
